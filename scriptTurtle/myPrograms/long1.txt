@@ -1,0 +1,32 @@
+forward 44
+right 90
+forward 33
+nosedown 90
+forward 33
+
+Rectangle
+forward 30
+triangle
+showTurtle
+
+LEARN rectangle [
+    forward 30
+    right 90
+    forward 30
+    Triangle
+    right 90
+    forward 30
+    right 90
+    forward 30
+    right 90
+]
+
+LEARN Triangle [
+    forward 30
+    right 120
+    forward 30
+    right 120
+    forward 30
+    right 120
+]
+
