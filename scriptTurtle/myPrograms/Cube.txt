@@ -1,0 +1,26 @@
+// comment this sketch
+
+oneSideOfCube
+oneSideOfCube
+oneSideOfCube
+oneSideOfCube
+
+showTurtle
+
+LEARN oneSideOfCube [
+    rectangle
+    forward 30
+    noseDown 90
+]
+
+LEARN rectangle [
+    forward 30
+    right 90
+    forward 30
+    right 90
+    forward 30
+    right 90
+    forward 30
+    right 90
+]
+
