@@ -5,6 +5,8 @@ class Parse {
   // parser
 
   boolean ignoreFollowingLines = false; 
+  // boolean keepOn=false;
+  boolean endFlag=false;
 
   // CONSTRUCTOR  
   Parse() {
@@ -13,60 +15,90 @@ class Parse {
 
   void parse(String txt) {
     // loop over entire script
-    String[] a1 = split(txt, "\n") ; 
+    String[] arrayScript = split(txt, "\n") ; 
 
-    int i=1; 
-    for (String line : a1) {
-      execute(line, i, false);
+    // println(txt); 
+    log=""; 
+
+    int i=0; 
+    endFlag=false;
+    for (String line : arrayScript) {
+      boolean dummy=execute(line, i, false);
+      if (endFlag) 
+        return; 
       i++;
     }
+
+    // Testing 
+    // println(log.substr(0,200) ); 
+    // state=stateEdit;
   }
 
-  void execute(String fullLine, int lineNumber, boolean isFunctionCall) {
+  boolean execute(String fullLine, int lineNumber, boolean isFunctionCall) {
 
     // Executes one line.
+
     // Makes some checks, whether line is ok or not. 
+
     // This function does have 2 main purposes: 
     //     * Normal execution of script (boolean isFunctionCall is false) and 
     //     * Execution as function call (isFunctionCall is true), called by eval. 
 
     fullLine = trim(fullLine);
 
-    if (fullLine.equals(""))
-      return; 
+    if (fullLine.equals("")) {
+      // ignore empty lines 
+      return true;
+    }
 
     if (fullLine.indexOf("//")==0) {
       // ignore comments
-      return;
+      return true;
     }
 
     String[] components = split(fullLine, " ");
 
     components[0]=trim(components[0].toUpperCase());
 
-    if (ignoreFollowingLines) {
-      // this situations means we are inside a function 
-      if (components[0].equals("LEARN")) {
-        state=stateError; 
-        errorMsg="No LEARN inside another LEARN allowed.  \n"
-          +"Your line was : '"
-          +fullLine
-          +"' (line number: " 
-          +lineNumber
-          +").";
-      } else if (components[0].equals("]")) {
-        ignoreFollowingLines = false;
-      } 
-      return;
+    //if (isFunctionCall&&ignoreFollowingLines) {
+    //  println ("isFunctionCall&&ignoreFollowingLines    "
+    //    +fullLine
+    //    +" in "
+    //    +lineNumber);
+    //}
+
+    if (!isFunctionCall) {
+      if (ignoreFollowingLines) {
+        // this situations means we are inside a function 
+        if (components[0].equals("LEARN")) {
+          state=stateError; 
+          errorMsg="No LEARN inside another LEARN allowed.  \n"
+            +"Your line was : '"
+            +fullLine
+            +"' (line number: " 
+            +lineNumber
+            +").";
+        } else if (components[0].equals("]")) {
+          ignoreFollowingLines = false;
+        } 
+        return true;
+      } //if
     } //if
 
-    // Testing: 
-    if (components.length>2) {
-      printArray ("length > 2: " + fullLine );
+    if (isFunctionCall) {
+      if (components[0].equals("]")) {
+        log += "end of function ---\n"; 
+        return false; // don't keep on
+      }
     }
 
+    //// Testing: 
+    //if (components.length>2) {
+    //  printArray ("length > 2: " + fullLine );
+    //}
+
     // standard commands like foward or left need to have 2 components:
-    // command and parameter(value)
+    // command and parameter(value) [whereas showTurtle etc. has no parameter]
     if (isStandardCommand( components[0]) && 
       components.length!=2) {
       state=stateError; 
@@ -77,15 +109,17 @@ class Parse {
         +"' (line number: " 
         +lineNumber
         +").";
-      return;
+      return true;
     }
 
-    eval(components, fullLine, lineNumber, false);
+    eval(components, fullLine, lineNumber, isFunctionCall);
+
+    return true; // keep on
   }   
 
   boolean isStandardCommand( String command ) {
-    // returns true when comand is a standard command such as forward
-    // which requires 1 numerical parameter 
+    // returns true when command is a standard command such as forward
+    // which requires one numerical parameter 
     String cmds =
       "#FORWARD#BACKWARD#RIGHT#LEFT#NOSEDOWN#NOSEUP#ROLLRIGHT#ROLLLEFT#"
       +"SINK#RISE#SIDEWAYSRIGHT#SIDEWAYSLEFT#FORWARDJUMP#BACKWARDJUMP#";
@@ -97,10 +131,17 @@ class Parse {
 
     // eval and exec
 
+    log += fullLine+"\n"; 
+
     if (components[0].equals("FORWARD")) {
       t.forward( int(components[1]));
     } else if (components[0].equals("BACKWARD")) {
       t.backward( int(components[1]));
+    } else if (components[0].equals("END")) {
+      // END
+      if (!isFunctionCall) { // ????? 
+        endFlag=true;
+      }
     } else if (components[0].equals("RIGHT")) {
       t.right( int(components[1]));
     } else if (components[0].equals("LEFT")) {
@@ -140,25 +181,26 @@ class Parse {
     } else if (components[0].equals("GRIDOFF")) {
       // without param
       t.flagDrawGridOnFloor = false;
+    } else if (components[0].equals("PUSHPOS")) {
+      // 1 param
+      t.learnPosition( components[1] );
+    } else if (components[0].equals("POPPOS")) {
+      // 1 param
+      t.retrievePosition( components[1] ) ;
     } else if (components[0].equals("LEARN")) {
-      ignoreFollowingLines = true;
+      if (!isFunctionCall) {
+        ignoreFollowingLines = true;
+        log+="ignore\n";
+      }
     } else if (components[0].equals("]")) {
       ignoreFollowingLines = false;
     } else if (components[0].equals(" ") || components[0].equals("")) {
       // should not occur
-    } else if (callSubFunctions ( components[0], fullLine ) > -1 ) {
-      // this is a function call. A function must be taught with Learn.
-      int lineNumber2 = callSubFunctions ( components[0], fullLine );
-
-      String[] arrayScript = split(tbox1.getText(), "\n") ; 
-
-      int i = lineNumber2; 
-      boolean keepOn=true; 
-      while (i< arrayScript.length && keepOn ) {
-        String line=arrayScript[i]; 
-        execute(line, i, true);
-        i++;
-      }
+    } else if ((lineNumberOfLearnCommand ( components[0] ) > -1) ) {
+      // The String components[0] contains a function name. 
+      // This is a function call. (A function must be taught with Learn.)
+      // Here we want to execute the function. 
+      runACommand(components);
     }
     //----------- 
     else {
@@ -173,36 +215,63 @@ class Parse {
     }
   } // func 
 
-  int callSubFunctions ( String command, String fullLine ) {
-    //
+  void runACommand (String[] components) {
+
+    // this is a function call. A function must be taught with Learn.
+
+    log+="function : -----------------\n"; 
+
+    int lineNumber2 = lineNumberOfLearnCommand ( components[0] );
 
     String[] arrayScript = split(tbox1.getText(), "\n") ; 
 
-    int i=1; 
+    int i2 = lineNumber2; 
+    ignoreFollowingLines=false; 
+    boolean keepOn=true; 
+    while ( i2 < arrayScript.length && keepOn ) {
+      String line=arrayScript[i2]; 
+      keepOn=execute(line, i2, true);
+      i2++;
+    }
+  }
+
+  int lineNumberOfLearnCommand ( String command ) {
+
+    // Retruns a line number of the LEARN command line. 
+    // If command is not defined as a function by LEARN, -1 is returned. 
+
+    String[] arrayScript = split(tbox1.getText(), "\n") ; 
+
+    int i=0;
     for (String line : arrayScript) {
-      if (execute2(command, line, i))
-        return i;
+      if (isLineWithLearnAndTheCorrectFunctionName(command, line))
+        return i+1;
       i++;
     }
 
     return -1;
   } // method  
 
-  boolean execute2(String command, String line, int lineNumber) {
+  boolean isLineWithLearnAndTheCorrectFunctionName(String command, String line) {
 
     // one line
 
     line = trim(line);
-    line=line.toUpperCase();
+    line = line.toUpperCase();
+    command = trim(command);
+    command = command.toUpperCase(); 
 
     if (line.equals(""))
-      return false; 
+      return false;
+    if (command.equals(""))
+      return false;
 
     String[] components = split(line, " ");
 
     components[0]=trim(components[0].toUpperCase());
     if (components.length>1)
       components[1]=trim(components[1].toUpperCase());
+    else return false; 
 
     if ( components[0].equals("LEARN") ) {
       //
@@ -213,5 +282,6 @@ class Parse {
     }
     return false;
   }
+  //
 }//class
 // 

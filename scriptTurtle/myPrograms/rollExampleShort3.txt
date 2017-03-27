@@ -1,0 +1,35 @@
+
+
+
+
+oneRect
+
+
+oneRect
+
+
+
+oneRect
+
+
+
+
+
+
+LEARN oneRect [
+    rectangle
+    rollRight 40
+]
+
+
+LEARN rectangle [
+    forward 30
+    right 90
+    forward 30
+    right 90
+    forward 30
+    right 90
+    forward 30
+    right 90
+]
+

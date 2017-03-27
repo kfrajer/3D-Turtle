@@ -87,6 +87,8 @@ void keyPressedForRunState() {
 
   default: 
     // go back 
+    println (log); 
+    // println(log.substring(0, 200) ); 
     state=stateEdit;
     // camera.setActive(true); 
     break; 

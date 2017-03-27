@@ -12,7 +12,7 @@ void statusBar() {
   textMode(MODEL);
   textMode(SHAPE);
 
-  // the rect of the staus bar
+  // the rect of the status bar
   fill(111); // gray 
   noStroke(); 
   rect(0, height-19, width, 30);
@@ -20,7 +20,7 @@ void statusBar() {
   // the text 
   fill(0);
   textSize(12);
-  text(statusBarText, 
+  text(statusBarText+ "     Version 0.1", 
     3, height-4);
 
   //textSize(24); 

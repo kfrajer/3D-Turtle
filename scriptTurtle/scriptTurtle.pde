@@ -52,6 +52,9 @@ final float speedAngle=3.972;
 // font 
 PFont font; 
 
+// logfile 
+String log=""; 
+
 // ------------------------------------------------------------
 // processing core 
 

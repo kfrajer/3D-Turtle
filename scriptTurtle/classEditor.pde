@@ -176,7 +176,7 @@ class TextBox {
       } else if (key == ENTER || key == RETURN) {
         doReturnKey();
       } else if (key == TAB) 
-        editorArray[currentLine] += "    ";
+        leftText += "    ";
       else if (key == DELETE) {
         // getText() = "";
         if (rightText.length()-1>=0) {

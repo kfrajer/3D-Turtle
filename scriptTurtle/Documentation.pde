@@ -40,9 +40,12 @@
  Major commands are 
  * forward/backward(amount) to walk
  * left/right(amount) - to turn [amount is an angle in degrees from 0 to 360]
- * penUp so Turtle walks but does not draw. * penDown Turtle draws again
- You can use all typical processing commands such as for-loop or a function.
- You can make your own turtle commands like turtleRectangle() by writing a function and use it.
+ * penUp so Turtle walks but does not draw. 
+ * penDown Turtle draws again
+ * END
+ * showTurtle
+ * // make a comment 
+ You can make your own turtle commands like Rectangle by writing a function with LEARN Rectangle [ and use it by saying rectangle.
  
  The turtle is also a 3D Turtle, imagine a water turtle that draws a line behind it.
  Thus you can connect four rectangles to a cube.

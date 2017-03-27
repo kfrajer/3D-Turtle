@@ -33,6 +33,8 @@ class Turtle {
 
   boolean flagDrawGridOnFloor=true; 
 
+  HashMap<String, PVector> hm = new HashMap<String, PVector>();
+
   // ------------------------------------------------------------
   // constr 
   Turtle () {
@@ -233,6 +235,44 @@ class Turtle {
       gridOnFloor();
     }
   }//method 
+
+
+  void learnPosition(String name) {
+    pushMatrix();
+  }
+  void learnPosition(String name) {
+
+    // Putting key-value pairs in the HashMap
+
+    // the turtle was drawn at (0, 0, 0), store that location
+    float xTemp = modelX(0, 0, 0);
+    float yTemp = modelY(0, 0, 0);
+    float zTemp = modelZ(0, 0, 0);
+
+    PVector posTurtle = new PVector(xTemp, yTemp, zTemp); 
+    hm.put(name, posTurtle);
+  }
+
+  void retrievePosition(String name) {
+
+    //popMatrix(); 
+    //return; 
+
+    // We can access values by their key
+    PVector val = null; 
+    val = hm.get(name); // access by key
+    println(name + " is " + val);
+    if (val!=null) {
+
+      float xTemp = modelX(0, 0, 0);
+      float yTemp = modelY(0, 0, 0);
+      float zTemp = modelZ(0, 0, 0);
+
+      println ("current pos is "+ xTemp+ ", "+ yTemp+ ", "+zTemp);
+
+      translate(val.x-xTemp, val.y-yTemp, val.z-zTemp);
+    }
+  } 
 
   // ----------------------------------------------------------
   // internal help functions 

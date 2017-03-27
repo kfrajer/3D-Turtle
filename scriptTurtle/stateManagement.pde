@@ -11,7 +11,7 @@ void stateManagement() {
     stateText="\n\nWelcome to the turtle script program \n\n\n\n"
       +"In Edit Mode hit # to run, in run mode hit space to go back.\n\n\n"
       +"Hit any key to go on \n\n" ;
-    statusBarText = "Welcome MODE. Space Bar for next page. ";
+    statusBarText = "Welcome to the Turtle. Space Bar to go to the Turtle editor. ";
     t.onSurfaceX(47);
     t.rollRight(angle1);
     t.showTurtle(); 
@@ -58,11 +58,11 @@ void stateManagement() {
     background(0);
     pushMatrix();
     stateText="";
-       t.drawGridOnFloor(); 
+    t.drawGridOnFloor(); 
     t.setColor(color(0, 255, 0));
     t.penDown(); 
     parser.parse(tbox1.getText());
-     // t.showTurtle(); 
+    // t.showTurtle(); 
     popMatrix();
     break;    
 
