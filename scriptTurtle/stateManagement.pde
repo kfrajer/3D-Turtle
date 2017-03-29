@@ -45,7 +45,7 @@ void stateManagement() {
     tbox1.display();
     textSize(24);
 
-    text("Edit Mode - save first then hit } to quit program.", 400, 55); 
+    text("Edit Mode - save first then hit } to quit program.", 660, 55); 
     camera.endHUD();
     break;
 
@@ -94,7 +94,7 @@ void stateManagement() {
       // waiting is over 
       state = stateEdit; 
       if (loadWithInsert) {
-        //         
+        // loading and insert into existing sketch        
         tbox1.writeLineBackInArray();
         // load a separate array
         String[] loadedArray=loadStrings(loadPath);
@@ -105,8 +105,56 @@ void stateManagement() {
       } else {
         // classical loading 
         tbox1.editorArray = loadStrings(loadPath);
+        tbox1.initNewLine();
       }
     }
+    break; 
+
+  case stateHelp:
+    background(0);
+    statusBarText = "Help MODE. Space Bar to go back. ";
+    t.help(); 
+    break; 
+
+  case stateShowLogfile:
+
+    statusBarText = "Logfile MODE. Space Bar to go back. ";
+
+    camera.beginHUD();
+    hint(DISABLE_DEPTH_TEST);
+    noLights();
+    textMode(SHAPE);
+
+    fill(255);
+    textMode(SHAPE);
+
+    fill(0);
+    textSize(14); 
+
+    text("Your Turtle program", 17, 25); 
+    text(tbox1.getText(), 17, 64);  
+    text("Your LogFile", width/2, 25); 
+
+    String logHelpText=""; 
+
+    if (trim(log).equals("")) {
+      logHelpText="\n<You must run your Turtle program once to \nsee the log data. >";
+    } else {
+      logHelpText=log;
+    }
+
+    text(logHelpText
+      +"\n\nWhat is it? A log file records what the Turtle program did "
+      +"(This is a very simple log-file by the way). In a simple Turtle program, "
+      +"the log files is almost the same as the Turtle program. "
+      +"In a more complex Turtle program you see how the functions are handled.", 
+      width/2, 64, width/2-22, height);
+
+    stroke(255);
+    line(width/2-4, 0, width/2-4, height);
+
+    camera.endHUD();
+
     break; 
 
   default:

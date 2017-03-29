@@ -13,6 +13,15 @@
 
 import peasy.*;
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+
+import java.awt.datatransfer.*;
+
+import com.jogamp.newt.opengl.GLWindow;
+
 // the main classes ------------ 
 
 // peasy cam 
@@ -35,8 +44,10 @@ final int stateEdit          = 1;
 final int stateRun           = 2; 
 final int stateError         = 3; 
 final int stateWaitForSave   = 4; 
-final int stateWaitForLoad   = 5; 
-int state=0;  // 
+final int stateWaitForLoad   = 5;
+final int stateHelp          = 6;
+final int stateShowLogfile   = 7;
+int state = stateWelcomeScreen;  // 
 
 // other variables --------------
 

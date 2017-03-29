@@ -5,8 +5,9 @@ class Parse {
   // parser
 
   boolean ignoreFollowingLines = false; 
-  // boolean keepOn=false;
   boolean endFlag=false;
+  //  int howManyLoops; 
+  boolean makeARepeat = false; 
 
   // CONSTRUCTOR  
   Parse() {
@@ -17,21 +18,22 @@ class Parse {
     // loop over entire script
     String[] arrayScript = split(txt, "\n") ; 
 
-    // println(txt); 
     log=""; 
 
     int i=0; 
     endFlag=false;
-    for (String line : arrayScript) {
+    while (i<arrayScript.length) { 
+      //for (String line : arrayScript) {
+      makeARepeat = false; 
+      String line =      arrayScript[i]; 
       boolean dummy=execute(line, i, false);
       if (endFlag) 
         return; 
+      if (makeARepeat) {
+        i=seRepeat.lineNumberStart;
+      }  
       i++;
     }
-
-    // Testing 
-    // println(log.substr(0,200) ); 
-    // state=stateEdit;
   }
 
   boolean execute(String fullLine, int lineNumber, boolean isFunctionCall) {
@@ -87,7 +89,7 @@ class Parse {
 
     if (isFunctionCall) {
       if (components[0].equals("]")) {
-        log += "end of function ---\n"; 
+        log += "end of function -------\n"; 
         return false; // don't keep on
       }
     }
@@ -97,7 +99,7 @@ class Parse {
     //  printArray ("length > 2: " + fullLine );
     //}
 
-    // standard commands like foward or left need to have 2 components:
+    // standard commands like forward or left need to have 2 components:
     // command and parameter(value) [whereas showTurtle etc. has no parameter]
     if (isStandardCommand( components[0]) && 
       components.length!=2) {
@@ -131,7 +133,10 @@ class Parse {
 
     // eval and exec
 
-    log += fullLine+"\n"; 
+    if (isFunctionCall)
+      log += "    "+fullLine+"\n";
+    else 
+    log += fullLine+"\n";
 
     if (components[0].equals("FORWARD")) {
       t.forward( int(components[1]));
@@ -156,6 +161,31 @@ class Parse {
     } else if (components[0].equals("PENDOWN")) {
       // without param
       t.penDown();
+    } else if (components[0].equals("HELP")) {
+      // without param
+      t.help();
+    } else if (components[0].equals("PUSHMATRIX")) {
+      // without param
+      pushMatrix();
+    } else if (components[0].equals("POPMATRIX")) {
+      // without param
+      popMatrix();
+    } else if (components[0].equals("BACKGROUND")) {
+      // param
+      if (components.length==4) 
+        background( int(components[1]), int(components[2]), int(components[3]));
+    } else if (components[0].equals("GRIDCOLOR")) {
+      // param
+      if (components.length==4) 
+        t.gridColor=color( int(components[1]), int(components[2]), int(components[3]));
+    } else if (components[0].equals("REPEAT")) {
+      // param
+      int howManyLoops = int(components[1]);
+      seRepeat = new  StackElement (howManyLoops, lineNumber) ;
+    } else if (components[0].equals("COLOR")) {
+      // param
+      if (components.length==4) 
+        t.turtleColor=color( int(components[1]), int(components[2]), int(components[3]));
     } else if (components[0].equals("ROLLRIGHT")) {
       t.rollRight( int(components[1]) );
     } else if (components[0].equals("ROLLLEFT")) {
@@ -194,6 +224,17 @@ class Parse {
       }
     } else if (components[0].equals("]")) {
       ignoreFollowingLines = false;
+    } else if (components[0].equals(")")) {
+      if (seRepeat.active) {
+        seRepeat.currentRepeat++;
+        if (seRepeat.currentRepeat<seRepeat.repeatHowOftenInTotal)
+        { 
+          makeARepeat = true;
+        } else {
+          makeARepeat = false;
+          seRepeat=null;
+        }
+      }
     } else if (components[0].equals(" ") || components[0].equals("")) {
       // should not occur
     } else if ((lineNumberOfLearnCommand ( components[0] ) > -1) ) {

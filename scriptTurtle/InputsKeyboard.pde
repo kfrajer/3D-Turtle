@@ -25,7 +25,9 @@ void keyPressed() {
     keyPressedForRunState() ;
     break;
 
+  case stateHelp:
   case stateError:
+  case stateShowLogfile:
     if (key==ESC) {
       key=0; // kill
     }

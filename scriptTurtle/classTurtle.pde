@@ -31,7 +31,8 @@ class Turtle {
   // Create the shape group turtle
   PShape turtlePShape;
 
-  boolean flagDrawGridOnFloor=true; 
+  boolean flagDrawGridOnFloor=true;
+  color gridColor = color(111); 
 
   HashMap<String, PVector> hm = new HashMap<String, PVector>();
 
@@ -178,11 +179,14 @@ class Turtle {
     noLights();
     textMode(SHAPE);
 
-    fill(BLACK);
+    fill(255);
     textMode(SHAPE);
+
+    textSize(14); 
+
     text( helpText(), 18, 25);
     camera.endHUD();
-    println (helpText());
+    //  println (helpText());
   }
 
   // Z
@@ -236,11 +240,11 @@ class Turtle {
     }
   }//method 
 
-
   void learnPosition(String name) {
     pushMatrix();
   }
-  void learnPosition(String name) {
+
+  void learnPosition3333333(String name) {
 
     // Putting key-value pairs in the HashMap
 
@@ -291,8 +295,8 @@ class Turtle {
     int d1 = d;
 
     translate(0, 0, -500);
-    // black
-    stroke(111);
+    // color
+    stroke(gridColor);
     rectMode(CENTER);
 
     for (int x = -width; x <= width; x += d) {
@@ -415,20 +419,39 @@ class Turtle {
     String a1= "Help for turtle\n-------------------------------------------\n";
     a1+= ("Imagine a turtle. You can tell it to go forward or turn left or right.\n");
     a1+= ("Imagine it carries a pen so when it walks it draws a line behind it.\n");
-    a1+= ("You can now draw an image by telling the turtle where to go.\n\n");
+    a1+= ("You can now draw an image by telling the turtle where to go.\n");
+    a1+= ("You can write in a white box your Turtle program and run it by clicking the green > sign with the mouse.\n");
+    a1+= ("Hit Esc to go back. See status bar at bottom screen to see in which mode you are.\n");
+    a1+= ("By the way: In edit mode leave your cursor on a screen button and see a yellow tool tip text.\n\n");
+
     a1+= ("Major commands are \n");
     a1+= ("     * forward/backward(amount) to walk\n"); 
     a1+= ("     * left/right(amount) - to turn [amount is an angle in degrees from 0 to 360]\n");
-    a1+= ("     * penUp so Turtle walks but does not draw. * penDown Turtle draws again\n");
-    a1+= ("You can use all typical processing commands such as for-loop or a function.\n"); 
-    a1+= ("You can make your own turtle commands like turtleRectangle() by writing a function and use it.\n\n");
+    a1+= ("     * penUp so Turtle walks but does not draw.\n");
+    a1+= ("     * penDown Turtle draws again\n");
+    a1+= ("You can use Learn Rect [ to teach it a new command and then use that command Rect.\n"); 
+    a1+= ("You can thus make your own turtle commands like turtleRectangle by writing a function and use it.\n\n");
     a1+= ("The turtle is also a 3D Turtle, imagine a water turtle that draws a line behind it.\n");
     a1+= ("Thus you can connect four rectangles to a cube.\n");
     a1+= ("Major commands are \n");
     a1+= ("     * noseDown/noseUp(degree) to turn down and up\n");
     a1+= ("     * rollRight/rollLeft(degree) to turn sidewise\n");
     a1+= ("     * sink/rise(amount) to go up and down\n");
-    a1+= ("************************************************************\n\n");
+    // a1+= ("************************************************************\n\n");
+    a1+= ("Additional commands to move without drawing (jumping)\n");
+    a1+= ("     * sink/rise(amount) to go up and down\n");
+    a1+= ("     * forwardJump/backwardJump(amount) to go forward and backward\n");
+    a1+= ("     * SIDEWAYSRIGHT/SIDEWAYSLEFT(amount) to go sideways\n");
+    // a1+= ("************************************************************\n\n");
+    a1+= ("Additional commands \n");
+    a1+= ("     * Help\n");
+    a1+= ("     * // make a comment with // comment\n");
+    a1+= ("     * pushMatrix and popMatrix\n");
+    a1+= ("     * background red green blue : set background color, e.g. blue is background 0 0 255\n");
+    a1+= ("     * COLOR red green blue : set Turtle drawing color (Pen) color, eg. red is COLOR 255 0 0\n");
+    a1+= ("     * GRIDCOLOR red green blue : set grid color color\n");
+    a1+= ("     * gridOn and gridOff : set grid on / off\n");
+    a1+= ("     * showTurtle to display a Turtle with the current heading. You can use it multiple times.\n");
     return a1;
   }
   //

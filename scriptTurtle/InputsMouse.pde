@@ -30,7 +30,9 @@ void mousePressed() {
     break;
 
   case stateWelcomeScreen:
-    // this ends the splash screen  
+  case stateHelp:
+  case stateShowLogfile:
+    // this ends the splash screen / the help
     state = stateEdit;
     break; 
 
@@ -105,6 +107,22 @@ void doCommandMouse(int commandNumber) {
     printArray(before); 
     printArray(after); 
     tbox1.editorArray =  (String[]) concat(before, after); 
+    tbox1.initNewLine();
+    break; 
+
+  case 6:
+    state=stateHelp; 
+    break;
+
+  case 7: 
+    state=stateShowLogfile;
+    break; 
+
+  case 8:
+    String[] clipboardArray=split(GetTextFromClipboard(), "\n");
+    // Splice one array of values into another
+    tbox1.spliceArray(clipboardArray);
+    clipboardArray=null; 
     tbox1.initNewLine();
     break; 
 

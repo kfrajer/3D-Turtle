@@ -12,7 +12,7 @@
 final boolean showButtonsForDebugging = false;  
 
 // how many for edit mode 
-final int btnLengthInMainMenu = 6;   // (in main menu (upper left corner))
+final int btnLengthInMainMenu = 9;   // (in main menu (upper left corner))
 
 final color colYellow     = color(244, 244, 44);
 
@@ -80,6 +80,18 @@ void setupButtons() {
   rectButtons.get(5).ToolTipText = "Delete line from sketch";
   rectButtons.get(5).Text = "DeleteLine";
   rectButtons.get(5).btnImage = loadImage("iconDeleteLine.jpg");
+
+  rectButtons.get(6).ToolTipText = "Help on commands";
+  rectButtons.get(6).Text = "HelpCommands";
+  rectButtons.get(6).btnImage = loadImage("iconHelp.jpg");
+
+  rectButtons.get(7).ToolTipText = "Show Logfile";
+  rectButtons.get(7).Text = "ShowLogfile";
+  rectButtons.get(7).btnImage = loadImage("iconLogfile.jpg");
+
+  rectButtons.get(8).ToolTipText = "Paste from Clipboard. ";
+  rectButtons.get(8).Text = "paste";
+  rectButtons.get(8).btnImage = loadImage("iconPasteFC.jpg");
 }
 
 void showButtons() { 
