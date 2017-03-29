@@ -119,11 +119,11 @@ void doCommandMouse(int commandNumber) {
     break; 
 
   case 8:
-    String[] clipboardArray=split(GetTextFromClipboard(), "\n");
+    ///  String[] clipboardArray=split(GetTextFromClipboard(), "\n");
     // Splice one array of values into another
-    tbox1.spliceArray(clipboardArray);
-    clipboardArray=null; 
-    tbox1.initNewLine();
+    //  tbox1.spliceArray(clipboardArray);
+    // clipboardArray=null; 
+    //  tbox1.initNewLine();
     break; 
 
   default:
