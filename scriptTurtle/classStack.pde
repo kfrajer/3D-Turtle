@@ -2,7 +2,8 @@
 
 // stack for repeat 
 
-StackElement seRepeat; 
+// StackElement seRepeat; 
+
 
 class StackElement {
 
@@ -18,9 +19,22 @@ class StackElement {
   // constr 
   StackElement( int repeatHowOftenInTotalTEMP, 
     int lineNumberStartTEMP) {
-      // 
+    // 
     repeatHowOftenInTotal = repeatHowOftenInTotalTEMP;
     lineNumberStart       = lineNumberStartTEMP;
   }// constr 
+
+  StackElement copy() {
+    return new StackElement (repeatHowOftenInTotal, lineNumberStart);
+  } // method 
+
+  String toString() {
+    return currentRepeat
+      +" of " 
+      +repeatHowOftenInTotal 
+      +" for line "
+      +lineNumberStart;
+  }//func
   //
 }
+//

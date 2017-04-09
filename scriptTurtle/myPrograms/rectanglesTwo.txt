@@ -1,6 +1,6 @@
 
 rectangle
-forward 44
+forwardJump 44
 rectangle
 
 

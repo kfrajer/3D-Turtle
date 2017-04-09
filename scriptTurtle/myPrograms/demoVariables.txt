@@ -1,0 +1,34 @@
+// Comnment: Triangle
+
+
+gridOn
+
+penDown
+
+Repeat 4 (
+    c1
+    forwardJump 30
+    right 90
+)
+
+LEARN c1 [
+    set N 57.53
+    rollRight N
+    Triangle
+    rollLeft N
+    rollLeft N
+    Triangle
+    rollRight N
+]
+
+LEARN Triangle [
+    forward 30
+    right 120
+    forward 30
+    right 120
+    forward 30
+    right 120
+]
+
+
+

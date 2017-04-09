@@ -20,7 +20,7 @@ void statusBar() {
   // the text 
   fill(0);
   textSize(12);
-  text(statusBarText+ "     Version 0.1.1", 
+  text(statusBarText+ "     Version 0.1.3", 
     3, height-4);
 
   //textSize(24); 
@@ -42,14 +42,17 @@ void avoidClipping() {
   perspective(PI/3.0, (float) width/height, 1, 1000000);
 }
 
-String GetTextFromClipboard ()
-{
+String GetTextFromClipboard () {
+  // ??????????
   String text = (String) GetFromClipboard(DataFlavor.stringFlavor);
 
   return text;
 }
 
 Object GetFromClipboard (DataFlavor flavor) {
+
+  // ??????????
+
   Object object = null;
   /*
   

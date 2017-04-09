@@ -1,14 +1,6 @@
-// Comment: Stair
+// Comment: Rectangle
 
-Repeat 10 (
-oneStep
-)
-
-LEARN oneStep [
-     rectangle
-     forward 10
-     rise 5
-]
+Rectangle
 
 LEARN rectangle [
     forward 30

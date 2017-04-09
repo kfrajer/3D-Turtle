@@ -1,5 +1,6 @@
 
 
+
 class Parse {
 
   // parser
@@ -7,7 +8,13 @@ class Parse {
   boolean ignoreFollowingLines = false; 
   boolean endFlag=false;
   //  int howManyLoops; 
-  boolean makeARepeat = false; 
+  // boolean makeARepeat = false; 
+  // StackElement seRepeat = null;
+
+  ArrayList<StackElement> stack = new ArrayList();  
+
+  HashMap<String, String> hmVariables = new HashMap<String, String>();
+
 
   // CONSTRUCTOR  
   Parse() {
@@ -19,19 +26,20 @@ class Parse {
     String[] arrayScript = split(txt, "\n") ; 
 
     log=""; 
+    hmVariables = new HashMap<String, String>();
 
     int i=0; 
     endFlag=false;
     while (i<arrayScript.length) { 
       //for (String line : arrayScript) {
-      makeARepeat = false; 
+      // makeARepeat = false; 
       String line =      arrayScript[i]; 
       boolean dummy=execute(line, i, false);
       if (endFlag) 
         return; 
-      if (makeARepeat) {
-        i=seRepeat.lineNumberStart;
-      }  
+      //if (makeARepeat) {
+      //  i=seRepeat.lineNumberStart;
+      //}  
       i++;
     }
   }
@@ -54,8 +62,16 @@ class Parse {
     }
 
     if (fullLine.indexOf("//")==0) {
-      // ignore comments
+      // ignore comments (full line)
       return true;
+    }
+
+    if (fullLine.indexOf("//")>0) {
+      // ignore comments (at the end of line)
+      String[] list  = split (fullLine, "//"); 
+      fullLine=list[0];
+      list=null;
+      fullLine=trim(fullLine);
     }
 
     String[] components = split(fullLine, " ");
@@ -133,6 +149,8 @@ class Parse {
 
     // eval and exec
 
+
+    // indent
     if (isFunctionCall)
       log += "    "+fullLine+"\n";
     else 
@@ -174,6 +192,24 @@ class Parse {
       // param
       if (components.length==4) 
         background( int(components[1]), int(components[2]), int(components[3]));
+    } else if (components[0].equals("BOX")) {
+      // param
+      if (components.length==1) 
+        box(17); 
+      else if (components.length==2) 
+        box(float(components[1]));
+    } else if (components[0].equals("SPHERE")) {
+      // param
+      if (components.length==1) {
+        sphereDetail(30); 
+        sphere(6);
+      } else if (components.length==2) {
+        sphereDetail(30); 
+        sphere(float(components[1]));
+      }
+    } else if (components[0].equals("STROKE")) {
+      // 
+      stroke(0);
     } else if (components[0].equals("GRIDCOLOR")) {
       // param
       if (components.length==4) 
@@ -181,15 +217,32 @@ class Parse {
     } else if (components[0].equals("REPEAT")) {
       // param
       int howManyLoops = int(components[1]);
-      seRepeat = new  StackElement (howManyLoops, lineNumber) ;
+      StackElement seRepeat = new  StackElement (howManyLoops, lineNumber) ;
+      stack.add(seRepeat);
     } else if (components[0].equals("COLOR")) {
       // param
-      if (components.length==4) 
+      if (components.length==4) {
         t.turtleColor=color( int(components[1]), int(components[2]), int(components[3]));
+        fill(t.turtleColor);
+      }
     } else if (components[0].equals("ROLLRIGHT")) {
-      t.rollRight( int(components[1]) );
+      // We can also access values by their key
+      String val = hmVariables.get(components[1]) ;
+      // println("hm-> is " + val);
+      if (val!=null) {
+        float a1 = float (val);          
+        t.rollRight( a1 );
+      } else
+        t.rollRight( int(components[1]) );
     } else if (components[0].equals("ROLLLEFT")) {
-      t.rollLeft( int(components[1]) );
+      // We can also access values by their key
+      String val = hmVariables.get(components[1]) ;
+      // println("hm-> is " + val);
+      if (val!=null) {
+        float a1 = float (val);          
+        t.rollLeft( a1 );
+      } else
+        t.rollLeft( int(components[1]) );
     } else if (components[0].equals("SHOWTURTLE")) {
       // without param
       t.showTurtle();
@@ -225,16 +278,14 @@ class Parse {
     } else if (components[0].equals("]")) {
       ignoreFollowingLines = false;
     } else if (components[0].equals(")")) {
-      if (seRepeat.active) {
-        seRepeat.currentRepeat++;
-        if (seRepeat.currentRepeat<seRepeat.repeatHowOftenInTotal)
-        { 
-          makeARepeat = true;
-        } else {
-          makeARepeat = false;
-          seRepeat=null;
-        }
-      }
+      // this closes a REPEAT block.
+      // We now want to start the repeat block again OR 
+      // skip it.      
+      runARepeatBlock (lineNumber);
+    } else if (components[0].equals("SET")) {
+      // set var 
+      // Putting key-value pairs in the HashMap
+      hmVariables.put (components[1], components[2]); // hashmap
     } else if (components[0].equals(" ") || components[0].equals("")) {
       // should not occur
     } else if ((lineNumberOfLearnCommand ( components[0] ) > -1) ) {
@@ -323,6 +374,43 @@ class Parse {
     }
     return false;
   }
+
+  void runARepeatBlock (int lineNumberStopAt) {
+
+    if (stack.size()<0)
+      return; 
+
+    StackElement seRepeat = stack.get(stack.size()-1); 
+
+    if (seRepeat==null) {
+      println ("seRepeat==null Error"); 
+      return; //
+    }
+
+    log += "repeat : -----------------"
+      +"\n"; 
+
+    seRepeat.currentRepeat++;
+
+    String[] arrayScript = split(tbox1.getText(), "\n") ; 
+
+    int i2 = seRepeat.lineNumberStart+1;    
+
+    boolean keepOn=true; // dummy 
+
+    while (  seRepeat.currentRepeat < seRepeat.repeatHowOftenInTotal ) {
+      String line=arrayScript[i2]; 
+      keepOn=execute(line, i2, false);
+      i2++;
+      if (i2 >= min(arrayScript.length, lineNumberStopAt)) {
+        // still repeating, jump back to first line of repeat block 
+        seRepeat.currentRepeat++;
+        i2 = seRepeat.lineNumberStart+1;
+      }
+    }//while
+    stack.remove(stack.size()-1); 
+    //
+  } // method 
   //
 }//class
 // 

@@ -251,6 +251,8 @@ class TextBox {
     if (currentColumn>editorArray[currentLine].length())
       currentColumn=editorArray[currentLine].length();
     // initNewLine();
+    if (currentColumn<0)
+      currentColumn=0;
     leftText  = editorArray[currentLine].substring( 0, currentColumn); 
     rightText = editorArray[currentLine].substring( currentColumn );
   }

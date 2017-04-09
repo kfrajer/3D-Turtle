@@ -119,6 +119,8 @@ void doCommandMouse(int commandNumber) {
     break; 
 
   case 8:
+    // paste from clipboard into code
+
     ///  String[] clipboardArray=split(GetTextFromClipboard(), "\n");
     // Splice one array of values into another
     //  tbox1.spliceArray(clipboardArray);

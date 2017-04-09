@@ -1,9 +1,8 @@
 // comment this sketch
 
-oneSideOfCube
-oneSideOfCube
-oneSideOfCube
-oneSideOfCube
+Repeat 4 (
+    oneSideOfCube
+)
 
 showTurtle
 

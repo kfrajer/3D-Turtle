@@ -241,11 +241,12 @@ class Turtle {
   }//method 
 
   void learnPosition(String name) {
+    // ??????????
     pushMatrix();
   }
 
   void learnPosition3333333(String name) {
-
+    // ??????????
     // Putting key-value pairs in the HashMap
 
     // the turtle was drawn at (0, 0, 0), store that location
@@ -258,24 +259,25 @@ class Turtle {
   }
 
   void retrievePosition(String name) {
-
-    //popMatrix(); 
-    //return; 
-
+    // ??????????
+    popMatrix(); 
+    return; 
+    /*
     // We can access values by their key
-    PVector val = null; 
-    val = hm.get(name); // access by key
-    println(name + " is " + val);
-    if (val!=null) {
-
-      float xTemp = modelX(0, 0, 0);
-      float yTemp = modelY(0, 0, 0);
-      float zTemp = modelZ(0, 0, 0);
-
-      println ("current pos is "+ xTemp+ ", "+ yTemp+ ", "+zTemp);
-
-      translate(val.x-xTemp, val.y-yTemp, val.z-zTemp);
-    }
+     PVector val = null; 
+     val = hm.get(name); // access by key
+     println(name + " is " + val);
+     if (val!=null) {
+     
+     float xTemp = modelX(0, 0, 0);
+     float yTemp = modelY(0, 0, 0);
+     float zTemp = modelZ(0, 0, 0);
+     
+     println ("current pos is "+ xTemp+ ", "+ yTemp+ ", "+zTemp);
+     
+     translate(val.x-xTemp, val.y-yTemp, val.z-zTemp);
+     }
+     */
   } 
 
   // ----------------------------------------------------------

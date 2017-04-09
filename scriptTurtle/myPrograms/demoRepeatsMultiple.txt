@@ -1,0 +1,26 @@
+// comment this sketch
+
+gridON
+
+repeat 3 (
+
+    forward 33 
+
+    repeat 4 (
+        forward 14
+        pushMatrix
+        repeat 2 (
+            forward 6
+            backward 6        
+            right 12
+        )
+        popMatrix
+        right 90
+    ) // inner repeat
+
+) // outer repeat
+
+
+
+
+ 

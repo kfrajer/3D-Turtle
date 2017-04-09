@@ -58,11 +58,12 @@ void stateManagement() {
     background(0);
     pushMatrix();
     stateText="";
-    t.drawGridOnFloor(); 
+    t.drawGridOnFloor();
+    noStroke(); 
     t.setColor(color(0, 255, 0));
+    fill(t.turtleColor);  
     t.penDown(); 
     parser.parse(tbox1.getText());
-    // t.showTurtle(); 
     popMatrix();
     break;    
 
@@ -147,7 +148,7 @@ void stateManagement() {
       +"\n\nWhat is it? A log file records what the Turtle program did "
       +"(This is a very simple log-file by the way). In a simple Turtle program, "
       +"the log files is almost the same as the Turtle program. "
-      +"In a more complex Turtle program you see how the functions are handled.", 
+      +"In a more complex Turtle program you see e.g. how Repeat and the functions (Learn) are handled.", 
       width/2, 64, width/2-22, height);
 
     stroke(255);
