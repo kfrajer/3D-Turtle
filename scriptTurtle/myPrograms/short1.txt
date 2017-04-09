@@ -1,5 +1,0 @@
-forward 44
-right 90
-forward 33
-
-
