@@ -1,26 +1,19 @@
 
 /**
- * credits:
  *
- * Turtle3D RectBox
- * 2017-02-07 Jeremy Douglass - Processing 3.2.3 - thank you! 
+ * Turtle3D with Turtle Script  
+ * 
+ * credits: Jeremy Douglass - thank you! 
  * https:// forum.processing.org/two/discussion/20706/how-3d-turtle-like-in-logo-but-3d-math-problem
- 
+ *
  * Thanks to PeasyCam 
  * Thanks to GoToLoop for the text input area
+ * Thanks for drawLine programmed by James Carruthers
+ * Thanks to Calsign
  *
  */
 
 import peasy.*;
-
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-
-import java.awt.datatransfer.*;
-
-import com.jogamp.newt.opengl.GLWindow;
 
 // the main classes ------------ 
 
@@ -39,7 +32,7 @@ Parse parser = new Parse();
 // the states ----------------
 
 // program logic: states 
-final int stateWelcomeScreen = 0; 
+final int stateWelcomeScreen = 0;  // unique numbers
 final int stateEdit          = 1; 
 final int stateRun           = 2; 
 final int stateError         = 3; 
@@ -47,9 +40,11 @@ final int stateWaitForSave   = 4;
 final int stateWaitForLoad   = 5;
 final int stateHelp          = 6;
 final int stateShowLogfile   = 7;
-int state = stateWelcomeScreen;  // 
+int state = stateWelcomeScreen;  // current
 
 // other variables --------------
+
+String versionString = "Version 0.1.312";
 
 // Misc 
 String stateText=""; 
@@ -66,6 +61,19 @@ PFont font;
 // logfile 
 String log=""; 
 
+// state show log file: no editor only text displaying 
+TextBoxDisplayOnly tboxLogFile1, tboxLogFile2;
+
+// standard commands with 1 parameter 
+String cmdsWithOneParameter =
+  "#FORWARD#BACKWARD#RIGHT#LEFT#NOSEDOWN#NOSEUP#ROLLRIGHT#ROLLLEFT#"
+  +"#SINK#RISE#SIDEWAYSRIGHT#SIDEWAYSLEFT#FORWARDJUMP#BACKWARDJUMP#ELLIPSE#";
+
+String cmdsOther =
+  "#LEARN#REPEAT#END#BOX#SPHERE#)#]#//#SHOWTURTLE#ARROW#"
+  +"TURTLE#COLOR#BACKGROUND#GRIDON#GRIDOFF#PENDOWN#PENUP#"
+  +"GRIDCOLOR#ELLIPSE#SET#ADD#SUB#MULT#DIV#HELP#";
+
 // ------------------------------------------------------------
 // processing core 
 
@@ -74,16 +82,14 @@ void setup() {
   size(1300, 1000, P3D);
 
   // init new turtle
-  t = new Turtle(); 
+  t = new Turtle();
 
-  // focus the cam on the center of the box
+  // focus the cam on the center 
   camera = new PeasyCam(this, 25, 25, -25, 100);
-
-  // help text 
-  println ("Hit any key for next page.\n\n");
 
   iconLoad = loadImage("iconLoad.jpg");
 
+  // init buttons 
   setupButtons(); 
 
   // font 
@@ -94,22 +100,20 @@ void setup() {
   background(192);
   avoidClipping();
 
+  // text editor init 
   instantiateBox();
-}//func
+
+  // set the filename text 
+  if (fileName.equals("")) {
+    fileName="<Not a file>";
+  }
+} //func
 
 void draw() {
   background(192);
-  avoidClipping(); 
-  lights();
 
   // the core 
   stateManagement();
-
-  // status bar (HUD) 
-  statusBar(); 
-
-  // Saves each frame as screen-0001.tif, screen-0002.tif, etc.
-  // saveFrame("line-######.png");
   //
 }//func
 //

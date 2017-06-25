@@ -1,0 +1,20 @@
+// comment for this Script: one angle
+gridON
+
+Arrow
+forward 44
+right 90
+forward 33
+
+Turtle
+
+forward 33 
+
+rollRight 45
+noseDown 45
+
+Arrow
+
+
+
+

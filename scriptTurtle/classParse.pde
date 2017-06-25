@@ -1,5 +1,5 @@
 
-
+// tab Parser
 
 class Parse {
 
@@ -7,9 +7,6 @@ class Parse {
 
   boolean ignoreFollowingLines = false; 
   boolean endFlag=false;
-  //  int howManyLoops; 
-  // boolean makeARepeat = false; 
-  // StackElement seRepeat = null;
 
   ArrayList<StackElement> stack = new ArrayList();  
 
@@ -22,7 +19,9 @@ class Parse {
   } // CONSTRUCTOR 
 
   void parse(String txt) {
+
     // loop over entire script
+
     String[] arrayScript = split(txt, "\n") ; 
 
     log=""; 
@@ -31,15 +30,10 @@ class Parse {
     int i=0; 
     endFlag=false;
     while (i<arrayScript.length) { 
-      //for (String line : arrayScript) {
-      // makeARepeat = false; 
       String line =      arrayScript[i]; 
       boolean dummy=execute(line, i, false);
       if (endFlag) 
         return; 
-      //if (makeARepeat) {
-      //  i=seRepeat.lineNumberStart;
-      //}  
       i++;
     }
   }
@@ -78,13 +72,6 @@ class Parse {
 
     components[0]=trim(components[0].toUpperCase());
 
-    //if (isFunctionCall&&ignoreFollowingLines) {
-    //  println ("isFunctionCall&&ignoreFollowingLines    "
-    //    +fullLine
-    //    +" in "
-    //    +lineNumber);
-    //}
-
     if (!isFunctionCall) {
       if (ignoreFollowingLines) {
         // this situations means we are inside a function 
@@ -117,7 +104,7 @@ class Parse {
 
     // standard commands like forward or left need to have 2 components:
     // command and parameter(value) [whereas showTurtle etc. has no parameter]
-    if (isStandardCommand( components[0]) && 
+    if (isStandardCommand(components[0]) && 
       components.length!=2) {
       state=stateError; 
       errorMsg="Standard commands like forward need a number, \n"+
@@ -138,33 +125,33 @@ class Parse {
   boolean isStandardCommand( String command ) {
     // returns true when command is a standard command such as forward
     // which requires one numerical parameter 
-    String cmds =
-      "#FORWARD#BACKWARD#RIGHT#LEFT#NOSEDOWN#NOSEUP#ROLLRIGHT#ROLLLEFT#"
-      +"SINK#RISE#SIDEWAYSRIGHT#SIDEWAYSLEFT#FORWARDJUMP#BACKWARDJUMP#";
+
     return 
-      cmds.indexOf(command) > -1;
+      cmdsWithOneParameter.indexOf(command) > -1;
   }
 
   void eval(String [] components, String fullLine, int lineNumber, boolean isFunctionCall) {
 
-    // eval and exec
+    // eval and exec - the core method 
 
-
-    // indent
+    // logfile with indent
     if (isFunctionCall)
       log += "    "+fullLine+"\n";
     else 
     log += fullLine+"\n";
 
+    // check the command 
+    // BASIC commands ---------
     if (components[0].equals("FORWARD")) {
-      t.forward( int(components[1]));
+      String val = hmVariables.get(components[1]) ;
+      if (val!=null) {
+        int a1 = int (val);          
+        t.forward( a1 );
+      } else {
+        t.forward( int(components[1]));
+      } // else
     } else if (components[0].equals("BACKWARD")) {
       t.backward( int(components[1]));
-    } else if (components[0].equals("END")) {
-      // END
-      if (!isFunctionCall) { // ????? 
-        endFlag=true;
-      }
     } else if (components[0].equals("RIGHT")) {
       t.right( int(components[1]));
     } else if (components[0].equals("LEFT")) {
@@ -179,7 +166,82 @@ class Parse {
     } else if (components[0].equals("PENDOWN")) {
       // without param
       t.penDown();
-    } else if (components[0].equals("HELP")) {
+    } else if (components[0].equals("END")) {
+      // END
+      if (!isFunctionCall) {  
+        endFlag=true;
+      }
+    }
+
+    // more advanced commands -------------------------------------
+
+    else if (components[0].equals("ROLLRIGHT")||components[0].equals("ROLL")) {
+      // We can also access values by their key
+      String val = hmVariables.get(components[1]) ;
+      if (val!=null) {
+        float a1 = float (val);          
+        t.rollRight( a1 );
+      } else
+        t.rollRight( int(components[1]) );
+    } else if (components[0].equals("ROLLLEFT")) {
+      // We can also access values by their key
+      String val = hmVariables.get(components[1]) ;
+      if (val!=null) {
+        float a1 = float (val);          
+        t.rollLeft( a1 );
+      } else
+        t.rollLeft( int(components[1]) );
+    } else if (components[0].equals("SHOWTURTLE")) {
+      // without param
+      t.showTurtle();
+    } else if (components[0].equals("TURTLE")) {
+      // without param
+      boolean storeValue = t.typeTurtlePShapeIsTurtle;
+      t.typeTurtlePShapeIsTurtle=true;
+      t.showTurtle();
+      t.typeTurtlePShapeIsTurtle=storeValue;
+    } else if (components[0].equals("ARROW")) {
+      // without param
+      boolean storeValue = t.typeTurtlePShapeIsTurtle;
+      t.typeTurtlePShapeIsTurtle=false;
+      t.showTurtle();
+      t.typeTurtlePShapeIsTurtle=storeValue;
+    } else if (components[0].equals("SHOWTURTLEASTURTLE")) {
+      t.typeTurtlePShapeIsTurtle=true;
+    } else if (components[0].equals("SHOWTURTLEASARROW")) {    
+      t.typeTurtlePShapeIsTurtle=false;
+    } else if (components[0].equals("SINK")) {
+      t.sink( int(components[1]) );
+    } else if (components[0].equals("RISE")) {
+      t.rise( int(components[1]) );
+    } else if (components[0].equals("SINKJUMP")) {
+      t.sinkJump( int(components[1]) );
+    } else if (components[0].equals("RISEJUMP")) {
+      t.riseJump( int(components[1]) );
+    } else if (components[0].equals("SIDEWAYSRIGHT")||components[0].equals("SIDEWAYS")) {
+      t.sidewaysRight( int(components[1]) );
+    } else if (components[0].equals("SIDEWAYSLEFT")) {
+      t.sidewaysLeft( int(components[1]) );
+    } else if (components[0].equals("FORWARDJUMP")) {
+      t.forwardJump( int(components[1]) );
+    } else if (components[0].equals("BACKWARDJUMP")) {
+      t.backwardJump( int(components[1]) );
+    } else if (components[0].equals("onSurfaceXRight")) { // onSurfaceXRight and -Left 
+      // t.onSurfaceXRight( int(components[1]) );
+    } else if (components[0].equals("onSurfaceXLeft")) {
+      // t.onSurfaceXLeft( int(components[1]) );
+    } else if (components[0].equals("GRIDON")) {
+      // without param
+      t.flagDrawGridOnFloor = true;
+      t.drawGridOnFloor();
+    } else if (components[0].equals("GRIDOFF")) {
+      // without param
+      t.flagDrawGridOnFloor = false;
+    }
+
+    // commands for meta structure  ----------------------
+
+    else if (components[0].equals("HELP")) {
       // without param
       t.help();
     } else if (components[0].equals("PUSHMATRIX")) {
@@ -190,91 +252,25 @@ class Parse {
       popMatrix();
     } else if (components[0].equals("BACKGROUND")) {
       // param
-      if (components.length==4) 
-        background( int(components[1]), int(components[2]), int(components[3]));
-    } else if (components[0].equals("BOX")) {
-      // param
-      if (components.length==1) 
-        box(17); 
-      else if (components.length==2) 
-        box(float(components[1]));
-    } else if (components[0].equals("SPHERE")) {
-      // param
-      if (components.length==1) {
-        sphereDetail(30); 
-        sphere(6);
-      } else if (components.length==2) {
-        sphereDetail(30); 
-        sphere(float(components[1]));
+      color c1 = getColor(components); 
+      if (c1!=-1) {
+        background(c1);
       }
-    } else if (components[0].equals("STROKE")) {
-      // 
-      stroke(0);
-    } else if (components[0].equals("GRIDCOLOR")) {
-      // param
-      if (components.length==4) 
-        t.gridColor=color( int(components[1]), int(components[2]), int(components[3]));
     } else if (components[0].equals("REPEAT")) {
       // param
       int howManyLoops = int(components[1]);
       StackElement seRepeat = new  StackElement (howManyLoops, lineNumber) ;
       stack.add(seRepeat);
-    } else if (components[0].equals("COLOR")) {
-      // param
-      if (components.length==4) {
-        t.turtleColor=color( int(components[1]), int(components[2]), int(components[3]));
-        fill(t.turtleColor);
-      }
-    } else if (components[0].equals("ROLLRIGHT")) {
-      // We can also access values by their key
-      String val = hmVariables.get(components[1]) ;
-      // println("hm-> is " + val);
-      if (val!=null) {
-        float a1 = float (val);          
-        t.rollRight( a1 );
-      } else
-        t.rollRight( int(components[1]) );
-    } else if (components[0].equals("ROLLLEFT")) {
-      // We can also access values by their key
-      String val = hmVariables.get(components[1]) ;
-      // println("hm-> is " + val);
-      if (val!=null) {
-        float a1 = float (val);          
-        t.rollLeft( a1 );
-      } else
-        t.rollLeft( int(components[1]) );
-    } else if (components[0].equals("SHOWTURTLE")) {
-      // without param
-      t.showTurtle();
-    } else if (components[0].equals("SINK")) {
-      t.sink( int(components[1]) );
-    } else if (components[0].equals("RISE")) {
-      t.rise( int(components[1]) );
-    } else if (components[0].equals("SIDEWAYSRIGHT")) {
-      t.sidewaysRight( int(components[1]) );
-    } else if (components[0].equals("SIDEWAYSLEFT")) {
-      t.sidewaysLeft( int(components[1]) );
-    } else if (components[0].equals("FORWARDJUMP")) {
-      t.forwardJump( int(components[1]) );
-    } else if (components[0].equals("BACKWARDJUMP")) {
-      t.backwardJump( int(components[1]) );
-    } else if (components[0].equals("GRIDON")) {
-      // without param
-      t.flagDrawGridOnFloor = true;
-    } else if (components[0].equals("GRIDOFF")) {
-      // without param
-      t.flagDrawGridOnFloor = false;
-    } else if (components[0].equals("PUSHPOS")) {
-      // 1 param
-      t.learnPosition( components[1] );
-    } else if (components[0].equals("POPPOS")) {
-      // 1 param
-      t.retrievePosition( components[1] ) ;
     } else if (components[0].equals("LEARN")) {
       if (!isFunctionCall) {
         ignoreFollowingLines = true;
         log+="ignore\n";
       }
+    } else if ((lineNumberOfLearnCommand ( components[0] ) > -1) ) {
+      // The String components[0] contains a function name. 
+      // This is a function call. (A function must be taught with Learn.)
+      // Here we want to execute the function. 
+      runACommand(components);
     } else if (components[0].equals("]")) {
       ignoreFollowingLines = false;
     } else if (components[0].equals(")")) {
@@ -282,19 +278,112 @@ class Parse {
       // We now want to start the repeat block again OR 
       // skip it.      
       runARepeatBlock (lineNumber);
-    } else if (components[0].equals("SET")) {
+    }
+    // commands for shapes -------------------------------------
+
+    else if (components[0].equals("BOX")) {
+      // param
+      noStroke();
+      fill(t.turtleColor);
+      if (components.length==1) 
+        box(7); 
+      else if (components.length==2) 
+        box(float(components[1]));
+    } else if (components[0].equals("SPHERE")) {
+      // param
+      noStroke();
+      fill(t.turtleColor);
+      if (components.length==1) {
+        sphereDetail(30); 
+        sphere(6);
+      } else if (components.length==2) {
+        sphereDetail(20); 
+        sphere(float(components[1]));
+      }
+    } else if (components[0].equals("ELLIPSE")) {
+      stroke(t.turtleColor); 
+      noFill();
+      ellipseMode(CORNER); 
+      ellipse(0, 0, float(components[1]), float(components[1]));
+    } else if (components[0].equals("TEXTSIZE")) {
+      // text size
+      textSize(float(components[1]));
+    } else if (components[0].equals("TEXT")) {
+      // text output
+      String localText=""; 
+      for (int iText=1; iText < components.length; iText++) {
+        localText+=components[iText]+" ";
+      }
+      t.dropText(localText);
+    } 
+    // colors --------------------------------
+
+    else if (components[0].equals("STROKE")) {
+      // 
+      stroke(244);
+    } else if (components[0].equals("GRIDCOLOR")) {
+      // param
+      color c1 = getColor(components); 
+      if (c1!=-1) {
+        t.gridColor=c1;
+      }
+    } else if (components[0].equals("COLOR")) {
+      // params
+      color c1 = getColor(components);
+      if (c1!=-1) {
+        t.turtleColor=c1;
+        fill(t.turtleColor);
+      }
+    } 
+    // ------------------------------------------------
+    //else if (components[0].equals("PUSHPOS")) {
+    // // 1 param
+    // t.learnPosition( components[1] );
+    // }// else if (components[0].equals("POPPOS")) {
+    // // 1 param
+    // t.retrievePosition( components[1] ) ;
+    //}//
+
+    // Variable Handling -----------------------------------------------
+    else if (components[0].equals("SET")) {
       // set var 
       // Putting key-value pairs in the HashMap
       hmVariables.put (components[1], components[2]); // hashmap
-    } else if (components[0].equals(" ") || components[0].equals("")) {
-      // should not occur
-    } else if ((lineNumberOfLearnCommand ( components[0] ) > -1) ) {
-      // The String components[0] contains a function name. 
-      // This is a function call. (A function must be taught with Learn.)
-      // Here we want to execute the function. 
-      runACommand(components);
+    } else if (components[0].equals("ADD")) {
+      // inc var       
+      float dummy = float( hmVariables.get (components[1])); // hashmap
+      // Putting key-value pairs in the HashMap
+      hmVariables.put (components[1], new String( str (dummy + float(components[2])))); // hashmap
+    } else if (components[0].equals("SUB")) {
+      // inc var       
+      float dummy = float( hmVariables.get (components[1])); // hashmap
+      // Putting key-value pairs in the HashMap
+      hmVariables.put (components[1], new String( str (dummy - float(components[2])))); // hashmap
+    } else if (components[0].equals("MULT")) {
+      // inc var       
+      float dummy = float( hmVariables.get (components[1])); // hashmap
+      // Putting key-value pairs in the HashMap
+      hmVariables.put (components[1], new String( str (dummy * float(components[2])))); // hashmap
+    } else if (components[0].equals("DIV")) {
+      // inc var  
+      float dummy = float( hmVariables.get (components[1])); // hashmap
+      // Putting key-value pairs in the HashMap
+      hmVariables.put (components[1], new String( str (dummy / float(components[2])))); // hashmap
     }
-    //----------- 
+    // Other ---------------------------------------------------------------
+    else if (components[0].equals("PAINTRECTANGLE")) { 
+      paintRectangle(35);
+    } else if (components[0].equals("PAINTBOX1")) { 
+      paintBox1(35);
+    } else if (components[0].equals("PAINTBOX2")) { 
+      paintBox2(35);
+    } 
+    // Error 1 -------------------------------------------------
+    else if (components[0].equals(" ") || components[0].equals("")) {
+      // should not occur
+    } 
+
+    //--------------------------------------------------------------
     else {
       // Error
       state=stateError; 
@@ -306,6 +395,18 @@ class Parse {
       return;
     }
   } // func 
+
+  color getColor(String[] components) {
+    color c1=-1;  
+    if (components.length==4) {
+      c1=color( int(components[1]), int(components[2]), int(components[3]));
+    } else if (components.length==2) {
+      if (t.colorsEnglish.hasKey(components[1])) {
+        c1 = t.colorsEnglish.get(components[1]);
+      }
+    }
+    return c1;
+  } // method 
 
   void runACommand (String[] components) {
 
@@ -329,7 +430,7 @@ class Parse {
 
   int lineNumberOfLearnCommand ( String command ) {
 
-    // Retruns a line number of the LEARN command line. 
+    // Returns a line number of the LEARN command line. 
     // If command is not defined as a function by LEARN, -1 is returned. 
 
     String[] arrayScript = split(tbox1.getText(), "\n") ; 

@@ -1,0 +1,14 @@
+// comment for this Script: forwardJump 
+
+gridON
+
+forward 44
+right 90
+
+forwardJump 15
+
+forward 15
+
+showTurtle
+
+

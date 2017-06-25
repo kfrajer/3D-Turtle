@@ -5,40 +5,90 @@ String savePath="";
 String loadPath=""; 
 boolean loadWithInsert=false; 
 
+String loadedFile = ""; 
+
+String fileName = ""; 
+
+// ------------------------------------------------------------
+// init loading and saving 
+
 void loadProgram() {
   //
   state=stateWaitForLoad;
   loadPath="";
-  File start1 = new File(sketchPath("")+"/myPrograms/*.txt"); 
+  File start1 = new File(sketchPath("")+"/myScripts/*.txt"); 
   selectInput("Select a file to write to:", "fileSelectedForLoad", start1);
 }
 
 void saveProgram() {
-  //
+  // simple Save or Save As....
+  if (!loadedFile.equals("")) {
+    if (fileExists(loadedFile)) {
+      // just save (with old name), overwrite file 
+      saveStrings(loadedFile, tbox1.getTextAsArray());
+    }
+  } else {
+    // Save As....
+    // Init dialog box
+    state=stateWaitForSave; 
+    savePath="";
+    File start1 = new File(sketchPath("")+"/myScripts/*.txt");
+    selectOutput("Select a file to write to:", "fileSelectedForSave", start1);
+  }
+}
+
+void saveProgramAs () {
+  // Save As....
+  // Init dialog box
   state=stateWaitForSave; 
   savePath="";
-  File start1 = new File(sketchPath("")+"/myPrograms/*.txt");
+  File start1 = new File(sketchPath("")+"/myScripts/*.txt");
   selectOutput("Select a file to write to:", "fileSelectedForSave", start1);
 }
 
 // ------------------------------------------------------------
+// event functions 
 
 void fileSelectedForSave(File selection) {
   if (selection == null) {
-    println("Window was closed or the user hit cancel.");
+    // println("Window was closed or the user hit cancel.");
     state=stateEdit;
   } else {
     savePath=selection.getAbsolutePath();
+    loadedFile=selection.getAbsolutePath();
     println("User selected " + savePath);
   }
 }
 
 void fileSelectedForLoad(File selection) {
   if (selection == null) {
-    println("Window was closed or the user hit cancel.");
+    // println("Window was closed or the user hit cancel.");
     state=stateEdit;
   } else {
-    loadPath=selection.getAbsolutePath(); 
+    loadPath=selection.getAbsolutePath();
+    loadedFile=selection.getAbsolutePath();
     println("User selected " + selection.getAbsolutePath());
   }
 }
+
+// ------------------------------------------------
+// tools
+
+String nameFromPath(String fileName) {
+
+  File file = new File(fileName);
+  String result = file.getName();
+  return result;
+} 
+
+boolean fileExists(String fileName) {
+  File file=new File(fileName);
+  String result = file.getName(); 
+  boolean exists = file.exists();
+  if (!exists) {
+    return false;
+  } else {
+    return true;
+  }
+} 
+//

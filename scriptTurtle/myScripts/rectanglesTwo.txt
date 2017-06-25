@@ -1,0 +1,17 @@
+
+rectangle
+forwardJump 44
+rectangle
+
+
+LEARN rectangle [
+    forward 30
+    right 90
+    forward 30
+    right 90
+    forward 30
+    right 90
+    forward 30
+    right 90
+]
+

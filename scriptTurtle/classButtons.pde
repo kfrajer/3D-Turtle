@@ -1,5 +1,6 @@
 
 // class RectButton and Button  
+// (two classes)
 
 class RectButton extends Button {
 
@@ -15,6 +16,7 @@ class RectButton extends Button {
     String iText, 
     String iToolTipText, 
     PImage iBtnImage) {
+
     x = ix;
     y = iy;
     sizeX = isizeX;
@@ -98,8 +100,19 @@ class RectButton extends Button {
       textAlign(LEFT);
     }
   }
+
+  void setPosition ( int ix, int iy, 
+    int isizeX, int isizeY) {
+    // 
+    x = ix;
+    y = iy;
+    sizeX = isizeX;
+    sizeY = isizeY;
+  } 
   //
 } // class
+
+// =========================================================================
 
 class Button {
 
@@ -139,10 +152,11 @@ class Button {
     if (over()) {
       if (!ToolTipText.equals("")) {
         if (millis() - timeSinceLastMouseMoved > 800) {
+
           fill(colYellow); //  (242, 245, 75);
           noStroke();
           textSize (12);
-          float tw = textWidth(ToolTipText);
+          float tw = textWidth(ToolTipText)+8;
           float xLeft = x-(tw/2); 
           float xRight = x-(tw/2) + tw; 
           float xLeftText = x; 
@@ -150,16 +164,14 @@ class Button {
             xLeft= width-tw-2;
             xLeftText= xLeft + tw/2;
           } 
-          if (xLeft< 2) 
-          { 
+          if (xLeft< 2) { 
             xLeft=2;
             xLeftText= 2 + tw / 2;
           }
-          rect (xLeft, y+32, tw, 20);
+          rect (xLeft, y+sizeY+2, tw, 20);
           textAlign(CENTER);
           fill(0);
-          //fill(255);
-          text(ToolTipText, xLeftText, y+44);
+          text(ToolTipText, xLeftText, y+16+sizeY);
           textAlign(LEFT);
           textSize(16);
         } //  if

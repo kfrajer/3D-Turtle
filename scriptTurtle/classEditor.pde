@@ -1,27 +1,53 @@
 
+// Editor
 
 class TextBox {
 
   // demands rectMode(CORNER)
 
-  color textC, baseC, bordC, slctC;
+  // this is the entire text of the editor box 
+  EditorLine[] editorArray = new EditorLine[2];
+
+  // position and size of editor box
   short x, y, 
     w, h;
 
+  // colors 
+  color textAreaTextColor, textAreaBackgroundColor, textAreaBorderColor;
+
+  // current startline via scrolling 
+  int start=0; 
+
+  // for cursor movements: 
+  // When we use CRS up and down currentLine changes; 
+  // for CRS left and right currentColumn changes.  
+  int currentColumn = 0; // x-value measured in characters
+  int currentLine = 0;   // y-value measured in lines 
+
+  final int linesInEditor=67; 
+
   // Two examples of code: 
   String text1 = 
-    "// comment this sketch\ngridON\nforward 44\n"
-    +"right 90\nforward 33\n";
+    "// comment for this Script: one angle\n"
+    +"gridON\n"
+    +"forward 44\n"
+    +"right 90\n"+
+    "forward 33\n"+
+    "\nshowTurtle\n";
 
   String text2 = 
     "forward 44\n"
-    +"right 90\nforward 33\n"
-    +"nosedown 90\nforward 33\n\n"
-    +"Rectangle\nforward 30\n"
-    +"triangle\n"
+    +"right 90\n"
+    +"forward 33\n"
+    +"nosedown 90\n"
+    +"forward 33\n\n"
+    +"Rectangle\n"
+    +"forward 30\n"
+    +"noseDown 90\n"
+    +"Triangle\n"
     +"showTurtle\n\n"
     +""
-    +"LEARN rectangle [\n"
+    +"LEARN Rectangle [\n"
     +"    forward 30\n"
     +"    right 90\n"
     +"    forward 30\n"
@@ -39,100 +65,94 @@ class TextBox {
     +"    right 120\n"
     +"    forward 30\n"
     +"    right 120\n"
-    +"]";  
+    +"]\n";  
 
-  // this is the entire text of the editor text area 
-  String[] editorArray = new String[220];
-
-  // whether the blinking line is currentliy on or off 
-  boolean showCursorAsLine=true; 
-
-  // for cursor movements: 
-  // When we use CRS up and down currentLine changes; 
-  // for CRS left and right currentColumn changes.  
-  int currentColumn = 0; // x-value measured in characters
-  int currentLine = 0; // y-value measured in lines 
-
-  // when working within one line by CRS left and right, by backspace and by delete,
-  // the line is internally split up into 2 strings, which are left and right from the 
-  // cursor. Thus it's easy to do backspace within a line etc. 
-  String leftText="", rightText="";
-
+  // ----------------
 
   // constr 
   TextBox(int xx, int yy, 
     int ww, int hh, 
-    color te, color ba, color bo, color se) {
+    color textC_, color backgroundC_, color borderC_) {
 
     x = (short) xx;
     y = (short) yy;
     w = (short) ww;
     h = (short) hh;
 
-    //xw = (short) (xx + ww);
-    //yh = (short) (yy + hh);
+    textAreaTextColor = textC_;
+    textAreaBackgroundColor = backgroundC_;
+    textAreaBorderColor = borderC_;
 
-    textC = te;
-
-    baseC = ba;
-    baseC = color(255);
-
-    bordC = bo;
-    slctC = se;
-
-    editorArray = split(text1+"\n", "\n");
+    initText(text2);
 
     currentLine=editorArray.length-1;
+
+    initNewLine();
   } // constr 
+
+  void initText(String textLocal) {
+
+    // set text 
+
+    String[] stringArray = split(textLocal, "\n");
+
+    // reset
+    editorArray = new EditorLine[stringArray.length];
+
+    int i=0; 
+    for (String s1 : stringArray) {
+      editorArray[i] = new EditorLine(s1);
+      i++;
+    }
+  }
+
+  String getText() {
+    String result = "";
+    for (EditorLine eline1 : editorArray) {
+      result += eline1.text1+"\n";
+    }
+    return result;
+  } //method
+
+  String[] getTextAsArray() {
+    return split(getText(), "\n");
+  }//method
 
   void display() {
 
-    rectMode(CORNER); 
-    fill(baseC);
+    rectMode(CORNER);
+
+    //textAlign(LEFT, BASELINE); 
+    textAlign(LEFT, TOP);
+
+    stroke(textAreaBorderColor); 
+    strokeWeight(1); 
+    fill(textAreaBackgroundColor);
     rect(x, y, w, h);
+    strokeWeight(1); 
 
-    fill(textC);
+    // scrollbar 
+    fill(GRAY); 
+    rect(x+w, y, 16, h);
 
-    float textx=x+3;
-    float texty=y+2; 
+    fill(textAreaTextColor);
 
-    for (int i = 0; i < editorArray.length; i++) {
+    float textx=x+3;   // x+3
+    float texty=y+2;   // y+2 
 
-      if (i==currentLine) {
-        // this is the current line of the cursor
-        text(leftText + rightText, 
-          textx, texty, 
-          w, h);
-        float leftWidth = textWidth(leftText);
-        if ((frameCount%11) == 0) {
-          showCursorAsLine= ! showCursorAsLine;
-        }
-        if (showCursorAsLine) {
-          stroke(255, 0, 0); 
-          strokeWeight(1); 
-          line(textx+leftWidth, texty, 
-            textx+leftWidth, texty+19);
-          stroke(0);
-        }
-      } else {
-        // other lines
-        text(editorArray[i], 
-          textx, texty, 
-          w, h);
-      }
+    for (int i = start; i < min(start+linesInEditor, editorArray.length); i++) {
+
+      editorArray[i].display(i, currentLine, textx, texty); 
+
       //next line
-      texty+=13;
+      texty += 13;
     }//for
     //
   }//method
 
-  String getText() {
-    return join (editorArray, "\n");
-  }
-
   void keyPressedInClassEditor() {
 
-    int len = editorArray[currentLine].length();
+    int len = editorArray[currentLine].text1.length();
 
     if (key == CODED) {
 
@@ -148,113 +168,276 @@ class TextBox {
         currentLine--;
         if (currentLine<0)
           currentLine=0;
-        initNewLine(); // currentColumn
+        // Do we have to scroll? 
+        if (currentLine<start) {
+          start-=5;
+          if (start<0)
+            start=0;
+        }          
+        initNewLine();
       } else if (keyCode == DOWN) {
         // next line in text 
         writeLineBackInArray();    
         currentLine++;
         if (currentLine>editorArray.length-1)
           currentLine=editorArray.length-1;
-        initNewLine(); // currentColumn
+        // Do we have to scroll?  
+        if (currentLine>=start+linesInEditor) {
+          start+=5;
+          if (start+linesInEditor > editorArray.length) { 
+            start = editorArray.length-linesInEditor;
+            if (start<0) 
+              start=0;
+          }// if
+        }//if          
+        initNewLine();
       } else {
         println (keyCode);
       }//else
-    }
+    }//if
     // -------------
     else {
 
       // not coded
 
       if (key == BACKSPACE) {  
-        if (leftText.length()>0) {
-          leftText = leftText.substring(0, leftText.length()-1);
-          currentColumn--;
-          writeLineBackInArray();
-        } else {
-          currentColumn=0;
-        }
+        doBackSpaceKey();
       } else if (key == ENTER || key == RETURN) {
         doReturnKey();
-      } else if (key == TAB) 
-        leftText += "    ";
-      else if (key == DELETE) {
-        // getText() = "";
-        if (rightText.length()-1>=0) {
-          rightText = rightText.substring(1);
-        }
+      } else if (key == TAB) {
+        editorArray[currentLine].leftText += "    ";
+      } else if (key == DELETE) {
+        //editorArray[currentLine].doDeleteKey();
+        doDeleteKey();
       } else if (key >= ' ') {    
-        // editorArray[currentLine] += str(k);
-        leftText += str(key);
+        editorArray[currentLine].leftText += str(key);
         writeLineBackInArray();
       } else {
-        //
+        // ignore
+        println (key);
       }
       //
     } //else
-  } //func
+    //
+  } //method
+
+  // ---------------------------------------------
+
+  void doDeleteKey() { 
+    if (editorArray[currentLine].rightText.length()-1>=0) {
+      editorArray[currentLine].rightText = editorArray[currentLine].rightText.substring(1);
+    }//if
+    //---
+    else {
+      // end of this line - suck next line in 
+      if (currentLine>=editorArray.length-1)
+        return; 
+      editorArray[currentLine].rightText += editorArray[currentLine+1].text1;
+      //delete line
+      deleteLine(currentLine+1);
+    }//else
+  } // method 
 
   void doReturnKey() {
-    tbox1.editorArray[currentLine]=leftText; 
-    String[] newLineArray=new String[1];
-    newLineArray[0] = rightText; 
+
+    // Enter was hit by user; potentially split the current line and 
+    // insert a new line after it (new line containing rightText) 
+
+    // old line gets the content of leftText
+    editorArray[currentLine].text1=editorArray[currentLine].leftText;
+
+    // new line inserted after the old line
+    EditorLine[] newLineArray=new EditorLine[1];
+    newLineArray[0] = new EditorLine(editorArray[currentLine].rightText);
+
     // Splice one array of values into another
-    editorArray = splice(editorArray, newLineArray, currentLine+1);
+    editorArray = (EditorLine[]) splice(editorArray, newLineArray, currentLine+1);
+
     currentLine++;
     currentColumn = 0;
+
     tbox1.initNewLine();
-  }
+  } // method
+
+  void doBackSpaceKey() {
+    // Backspace
+
+    if (editorArray[currentLine].leftText.length()>0) {
+      editorArray[currentLine].leftText = 
+        editorArray[currentLine].leftText.substring(0, editorArray[currentLine].leftText.length()-1);
+      currentColumn--;
+      writeLineBackInArray();
+    } else {
+      writeLineBackInArray();
+      if (currentLine==0)
+        return; 
+      int oldLine=currentLine;   
+      currentLine--;
+      initNewLine(); 
+      editorArray[currentLine].rightText += editorArray[oldLine].text1; 
+      currentColumn = editorArray[currentLine].text1.length();
+      deleteLine(oldLine); 
+      currentColumn=0;
+    }// else
+  }// method
 
   void spliceArray (String[] newArray) {
-    // Splice one array of values into another
-    editorArray = splice(editorArray, newArray, currentLine);
-  }
+    // Splice one array of values into the old text
+
+    // newArray must be made to EditorLine[] newArray2 first 
+    EditorLine[] newArray2  = new EditorLine[newArray.length];
+    int i=0; 
+    for (String s1 : newArray) {
+      newArray2[i] = new EditorLine(s1);
+      i++;
+    }
+
+    // and insert / splice 
+    editorArray =  (EditorLine[]) splice(editorArray, newArray2, currentLine);
+  }// method
 
   void initNewLine() {
-    //
-    if (currentColumn<0) {
-      currentColumn=0;
-    }
+    // when the cursor enters a new line, we need to prepare the line usage 
+
+    // catch some errors 
     if (editorArray.length<=0) {
-      editorArray=new String[1];
-      editorArray[0]="";
+      // something went very wrong
+      editorArray = new EditorLine[1];
+      editorArray[0]=new EditorLine("");
     }
 
+    // further possible errors 
     if (currentLine>=editorArray.length)
       currentLine=editorArray.length-1; 
 
-    if (currentColumn < editorArray[currentLine].length()-1) {
-      leftText  = editorArray[currentLine].substring( 0, currentColumn); 
-      rightText = editorArray[currentLine].substring( currentColumn );
+    if (currentLine<0)
+      currentLine=0; 
+
+    // catch some errors 
+    if (currentColumn<0) {
+      currentColumn=0;
+    }
+
+    if (currentColumn < text1.length()-1) {
+      //
     } else {
       //
-      currentColumn=editorArray[currentLine].length()-1;
+      currentColumn=text1.length()-1;
       if (currentColumn<0)
-        currentColumn=0; 
-      leftText  = editorArray[currentLine].substring( 0, currentColumn); 
-      rightText = editorArray[currentLine].substring( currentColumn);
-    }//
-  }
+        currentColumn=0;
+    }//else
+
+    // then prepare the current line 
+    editorArray[currentLine].initLine(currentColumn);
+  }//func
 
   void writeLineBackInArray() {
-    editorArray[currentLine] = leftText + rightText;
+    editorArray[currentLine].writeLineBackInArray();
   }
 
   void decreaseCurrentColumn() {
+    writeLineBackInArray();
+    // editorArray[currentLine].decreaseCurrentColumn();
     currentColumn--;
     if (currentColumn<0)
       currentColumn=0;
-    initNewLine() ;
+    initNewLine();
   }
 
   void increaseCurrentColumn() {
+    writeLineBackInArray(); 
+
     currentColumn++;
-    if (currentColumn>editorArray[currentLine].length())
-      currentColumn=editorArray[currentLine].length();
+    if (currentColumn > text1.length())
+      currentColumn = text1.length();
+
     // initNewLine();
     if (currentColumn<0)
       currentColumn=0;
-    leftText  = editorArray[currentLine].substring( 0, currentColumn); 
-    rightText = editorArray[currentLine].substring( currentColumn );
+
+    // editorArray[currentLine].increaseCurrentColumn(); 
+    initNewLine();
+  }
+
+  void mousePressed() {
+
+    // we want to place the cursor in the pressed spot in the script
+
+    float textx=x+3; // x+3
+    float texty=y+2; // y+2 
+
+    for (int i = start; i < min(start+linesInEditor, editorArray.length); i++) {
+
+      if (mouseX>textx && mouseY>texty && 
+        mouseX<textx+w && mouseY<=texty+13) {
+        writeLineBackInArray(); 
+        currentLine = i;        
+        currentColumn = getCurrentColumn(textx); 
+        textSize(24); 
+        initNewLine();
+        //break;
+        return;
+      }//if 
+
+      //next line
+      texty+=13;
+    }//for
+  }//method
+
+  int getCurrentColumn(float textx) {
+
+    // for mouse pressed: 
+    // we want to place the cursor in the pressed spot in the current line 
+
+    if (currentLine<0) {
+      return 0;
+    }
+
+    textSize(14);
+
+    for (int i = 0; i < editorArray[currentLine].text1.length(); i++) {
+
+      String leftText1 = editorArray[currentLine].text1.substring( 0, i );
+      float leftWidth1 = textWidth(leftText1);
+
+      if (textx+leftWidth1 > mouseX) {
+        return i-1; // success
+      }//if
+    }//for
+
+    return editorArray[currentLine].text1.length();
+  }//func
+
+  void mouseWheelTextArea(MouseEvent event) {
+
+    // scrolling up and down the text 
+
+    float e = event.getCount();
+
+    if (e<=-1)
+      start--;
+    else if (e>=1)
+      start++;
+
+    // checks 
+    if (start<0) 
+      start=0;
+
+    if (start+linesInEditor > editorArray.length) { 
+      start = editorArray.length-linesInEditor;
+      if (start<0) 
+        start=0;
+    }// if
+  }//func 
+
+  void deleteLine( int thisLine ) {
+    //delete line
+    tbox1.writeLineBackInArray(); 
+    EditorLine[] before = (EditorLine[]) subset(tbox1.editorArray, 0, thisLine);
+    EditorLine[] after  = (EditorLine[]) subset(tbox1.editorArray, thisLine+1);
+    EditorLine[] dummy = (EditorLine[]) concat(before, after); 
+    tbox1.editorArray=dummy;  // = tbox1.initText( join(dummy,"\n" );  
+    tbox1.initNewLine();
   }
   //
 }//class 

@@ -1,5 +1,5 @@
 
-// the pages in the tutorial
+// the different states
 
 void stateManagement() {
 
@@ -7,92 +7,118 @@ void stateManagement() {
 
   case stateWelcomeScreen:
     // welcome screen
+    camera.reset(); 
     pushMatrix();
-    stateText="\n\nWelcome to the turtle script program \n\n\n\n"
+    stateText="\n\nWelcome to the Turtle Script program. \n\n\n\n"
       +"In Edit Mode hit # to run, in run mode hit space to go back.\n\n\n"
       +"Hit any key to go on \n\n" ;
-    statusBarText = "Welcome to the Turtle. Space Bar to go to the Turtle editor. ";
-    t.onSurfaceX(47);
+    statusBarText = "Welcome to the Turtle. Press Space Bar to go to the Turtle editor. ";
+    t.forwardJump(47);
+    lights(); 
     t.rollRight(angle1);
     t.showTurtle(); 
     angle1 += speedAngle; 
     popMatrix();
+    // display editor and texts 
+    camera.beginHUD();
+    // status bar (HUD)
+    statusBar(); 
+    camera.endHUD();
     break;
 
   case stateEdit:
     // EDIT
-    statusBarText = "EDIT MODE. # for Run the program. } to leave entirely.  ";
-    lights(); 
-    pushMatrix();
-    stateText=""; 
-    t.onSurfaceX(47);
-    t.onSurfaceY(4);
-    t.rollRight(angle1);
-    t.showTurtle(); 
-    angle1 += speedAngle; 
-    popMatrix();
 
-    // display a text 
+    // display editor and texts 
     camera.beginHUD();
     hint(DISABLE_DEPTH_TEST);
     noLights();
     textMode(SHAPE);
     rectMode(CORNER);
-    showButtons();
+
+    statusBarText = "EDIT MODE. # for Run the Script.";
+    stateText     = ""; 
 
     fill(0);
     textSize(14); 
     tbox1.display();
     textSize(24);
+    // status bar (HUD) 
+    statusBar(); 
+    showButtons();
 
-    text("Edit Mode - save first then hit } to quit program.", 660, 55); 
+    fill(0);
+    text("Edit Mode - save first before quitting the program.\nFile: "
+      +fileName+"\n"
+      +"Line number: "
+      +tbox1.currentLine, 
+      660, 55); 
     camera.endHUD();
     break;
 
   case stateRun:
-    // RUN 
+    // RUN the Turtle Script 
+    avoidClipping(); 
+    lights();
     camera.setActive(true); 
     statusBarText = "RUN MODE. L - toggle line type, "
       +"Mouse to rotate and pan camera (peasycam), "
-      +"Mouse wheel to zoom+-, r to reset camera, Esc to quit.";
+      +"Mouse wheel to zoom+-, r to reset camera, a to toggle TurtleBody, Esc to quit.";
     background(0);
     pushMatrix();
     stateText="";
+    stroke(211); 
+    // t.flagDrawGridOnFloor = true;
     t.drawGridOnFloor();
-    noStroke(); 
+    //noStroke(); 
     t.setColor(color(0, 255, 0));
     fill(t.turtleColor);  
     t.penDown(); 
     parser.parse(tbox1.getText());
     popMatrix();
+    // status bar (HUD) 
+    statusBar(); 
     break;    
 
   case stateError: 
+    // error in code of the script 
     pushMatrix();
     stateText="\n\n An Error occured \n\n\n\n"
       +errorMsg;
     statusBarText = "Error MODE. Space Bar to go back. ";
-    t.onSurfaceX(47);
+    t.forwardJump(47);
     t.rollRight(angle1);
     t.showTurtle(); 
     angle1 += speedAngle; 
     popMatrix();
+    // status bar (HUD) 
+    statusBar(); 
     break; 
 
   case stateWaitForSave:
-    //
+    // wait
     if (!savePath.equals("")) {
       state = stateEdit; 
-      if (savePath.indexOf(".txt") < 0) 
+      if (savePath.indexOf(".txt") < 0) {
         savePath+=".txt"; // very rough approach...
-      saveStrings(savePath, tbox1.editorArray);
-    }
+      }
+      saveStrings(savePath, tbox1.getTextAsArray());
+
+      fileName=nameFromPath(savePath);
+
+      if (fileName.equals(""))
+        fileName="<Not a file>";
+    }//if
+    // status bar (HUD) 
+    statusBar(); 
     break;
 
   case stateWaitForLoad:
     // wait
+
+    // check if the input has been made: 
     if (!loadPath.equals("")) {
-      // waiting is over 
+      // yes, waiting is over 
       state = stateEdit; 
       if (loadWithInsert) {
         // loading and insert into existing sketch        
@@ -105,20 +131,32 @@ void stateManagement() {
         tbox1.initNewLine();
       } else {
         // classical loading 
-        tbox1.editorArray = loadStrings(loadPath);
+        String[] temp = loadStrings(loadPath);
+        tbox1.initText(join(temp, "\n")); 
+        temp=null;          
+        tbox1.start=0; 
         tbox1.initNewLine();
-      }
-    }
+        fileName=nameFromPath(loadPath);
+        if (fileName.equals("")) {
+          fileName="<Not a file>";
+        }
+      }//else
+    } // outer if
+    // status bar (HUD) 
+    statusBar(); 
     break; 
 
   case stateHelp:
+    // help
     background(0);
     statusBarText = "Help MODE. Space Bar to go back. ";
     t.help(); 
+    // status bar (HUD) 
+    statusBar(); 
     break; 
 
   case stateShowLogfile:
-
+    // show logfile
     statusBarText = "Logfile MODE. Space Bar to go back. ";
 
     camera.beginHUD();
@@ -126,34 +164,36 @@ void stateManagement() {
     noLights();
     textMode(SHAPE);
 
-    fill(255);
-    textMode(SHAPE);
+    // headers
+    fill(0);
+    textSize(24); 
+    text("Your Turtle Script", 17, 35); 
+    text("Your LogFile", width/2+17, 35); 
 
+    // 2 boxes 
     fill(0);
     textSize(14); 
+    tboxLogFile1.display();
+    tboxLogFile2.display();
 
-    text("Your Turtle program", 17, 25); 
-    text(tbox1.getText(), 17, 64);  
-    text("Your LogFile", width/2, 25); 
-
-    String logHelpText=""; 
-
-    if (trim(log).equals("")) {
-      logHelpText="\n<You must run your Turtle program once to \nsee the log data. >";
-    } else {
-      logHelpText=log;
-    }
-
-    text(logHelpText
-      +"\n\nWhat is it? A log file records what the Turtle program did "
-      +"(This is a very simple log-file by the way). In a simple Turtle program, "
-      +"the log files is almost the same as the Turtle program. "
-      +"In a more complex Turtle program you see e.g. how Repeat and the functions (Learn) are handled.", 
-      width/2, 64, width/2-22, height);
+    // 2 help texts 
+    textSize(14); 
+    text("What is it? This is your Turtle Script.", 
+      17, height-97, 
+      width/2-22, height);
+    text("What is it? A log file records what the Turtle Script did "
+      +"(This is a very simple log-file by the way). \nIn a simple Turtle Script, "
+      +"the log files is almost the same as the Turtle Script. "
+      +"In a more complex Turtle Script you see e.g. how Repeat and the functions (Learn) are handled.", 
+      width/2+17, height-97, 
+      width/2-22, height);
 
     stroke(255);
     line(width/2-4, 0, width/2-4, height);
 
+    // status bar (HUD) 
+    statusBar(); 
+    showButtonsLogFile();
     camera.endHUD();
 
     break; 
@@ -165,6 +205,7 @@ void stateManagement() {
     exit();
     state=0;
     break;
+    //
   } //switch
 } //func 
 //

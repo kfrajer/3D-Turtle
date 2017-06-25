@@ -1,0 +1,16 @@
+// comment for this Script: one angle
+gridON
+forward 44
+right 90
+
+sink 40
+
+forward 33
+
+rise 30 
+
+forward 30 
+
+showTurtle
+
+
