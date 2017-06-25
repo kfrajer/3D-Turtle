@@ -1,9 +1,0 @@
-// comment this sketch
-gridON
-box 15
-forward 44
-box
-right 90
-forward 33
-
-
