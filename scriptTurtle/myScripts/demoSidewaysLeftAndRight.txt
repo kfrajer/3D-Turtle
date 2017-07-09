@@ -1,9 +1,7 @@
-// Turtle Script : Demo for sink and rise 
+// Demo for Sideways
 
 gridON
-
 forward 44
-
 right 90
 
 sink 40
@@ -19,7 +17,6 @@ sideWaysLeft 30
 rise 30
 
 showTurtle
-
 
 
 

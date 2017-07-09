@@ -226,10 +226,6 @@ class Parse {
       t.forwardJump( int(components[1]) );
     } else if (components[0].equals("BACKWARDJUMP")) {
       t.backwardJump( int(components[1]) );
-    } else if (components[0].equals("onSurfaceXRight")) { // onSurfaceXRight and -Left 
-      // t.onSurfaceXRight( int(components[1]) );
-    } else if (components[0].equals("onSurfaceXLeft")) {
-      // t.onSurfaceXLeft( int(components[1]) );
     } else if (components[0].equals("GRIDON")) {
       // without param
       t.flagDrawGridOnFloor = true;

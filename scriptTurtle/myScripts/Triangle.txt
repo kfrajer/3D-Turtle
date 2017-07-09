@@ -1,4 +1,4 @@
-// Comnment: Triangle
+// Comment: Triangle
 
 triangle
 gridOn

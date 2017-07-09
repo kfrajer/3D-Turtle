@@ -282,38 +282,6 @@ class Turtle {
   }
 
   // -------------------------------------
-  // Y (with synonym)
-
-  //void onSurfaceY(float amount) {
-  //  // (synonym)
-  //  translate(amount, 0, 0);
-  //}
-
-  //void onSurfaceYDown(float amount) {
-  //  translate(0, amount, 0);
-  //}
-
-  //void onSurfaceYUp(float amount) {
-  //  translate(0, -amount, 0);
-  //}
-
-  // ---------------------------------------
-
-  // X (with synonym)
-  //void onSurfaceX(float amount) {
-  //  // (synonym)
-  //  translate(amount, 0, 0);
-  //}
-
-  //void onSurfaceXRight(float amount) {
-  //  translate(amount, 0, 0);
-  //}
-
-  //void onSurfaceXLeft(float amount) {
-  //  translate(-amount, 0, 0);
-  //}
-
-  // -------------------------------------
   // Rotations 
 
   // Yaw

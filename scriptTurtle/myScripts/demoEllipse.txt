@@ -1,4 +1,4 @@
-// comment this sketch
+// // Turtle Script: Demo for ellipse
 gridON
 forward 33
 Ellipse 44

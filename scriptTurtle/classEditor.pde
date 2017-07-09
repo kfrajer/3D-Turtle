@@ -26,17 +26,65 @@ class TextBox {
 
   final int linesInEditor=67; 
 
-  // Two examples of code: 
-  String text1 = 
-    "// comment for this Script: one angle\n"
-    +"gridON\n"
-    +"forward 44\n"
-    +"right 90\n"+
-    "forward 33\n"+
-    "\nshowTurtle\n";
+  // 3 examples of code: 
+  String textExample1 = 
+    "\n\n";
 
-  String text2 = 
-    "forward 44\n"
+  String textExample2 = "// Example for a Turtle Script - use icon New for blank Script\n"
+    +"\n"
+    +"right 45\n"
+    +"\n"
+    +"Rectangle\n"
+    +"\n"
+    +"left 45 \n"
+    +"\n"
+    +"forward 44\n"
+    +"right 90\n"
+    +"\n"
+    +"color RED \n"
+    +"\n"
+    +"penUp\n"
+    +"forward 33\n"
+    +"nosedown 90\n"
+    +"penDown\n"
+    +"forward 33\n"
+    +"\n"
+    +"color BLUE \n"
+    +"\n"
+    +"forward 30\n"
+    +"noseDown 90\n"
+    +"forward 30\n"
+    +"Triangle\n"
+    +"\n"
+    +"noseDown 95\n"
+    +"right 9\n"
+    +"forward 83\n"
+    +"\n"
+    +"showTurtle\n"
+    +"\n"
+    +"// ------------------------------------------\n"
+    +"\n"
+    +"LEARN Rectangle [\n"
+    +"    Repeat 4 (\n"
+    +"        forward 30\n"
+    +"        right 90\n"
+    +"    )\n"
+    +"]\n"
+    +"\n"
+    +"LEARN Triangle [\n"
+    +"    Repeat 3 (\n"
+    +"        forward 30\n"
+    +"        right 120\n"
+    +"    )\n"
+    +"]\n"
+    +"\n"
+
+    ; 
+
+
+  String textExample3 =
+    "// Example for a Turtle Script - use icon New for blank Script\n\n"
+    +"forward 44\n"
     +"right 90\n"
     +"forward 33\n"
     +"nosedown 90\n"
@@ -44,28 +92,30 @@ class TextBox {
     +"Rectangle\n"
     +"forward 30\n"
     +"noseDown 90\n"
+    +"forward 30\n"
     +"Triangle\n"
     +"showTurtle\n\n"
     +""
     +"LEARN Rectangle [\n"
-    +"    forward 30\n"
-    +"    right 90\n"
-    +"    forward 30\n"
-    +"    Triangle\n"
-    +"    right 90\n"
-    +"    forward 30\n"
-    +"    right 90\n"
-    +"    forward 30\n"
-    +"    right 90\n"
+    +"    Repeat 4 (\n"
+    +"        forward 30\n"
+    +"        right 90\n"
+    +"    )\n"
     +"]\n\n"
     +"LEARN Triangle [\n"
-    +"    forward 30\n"
-    +"    right 120\n"
-    +"    forward 30\n"
-    +"    right 120\n"
-    +"    forward 30\n"
-    +"    right 120\n"
+    +"    Repeat 3 (\n"
+    +"        forward 30\n"
+    +"        right 120\n"
+    +"    )\n"
     +"]\n";  
+
+  String textExample4 = 
+    "// comment for this Script: one angle\n"
+    +"gridON\n"
+    +"forward 44\n"
+    +"right 90\n"+
+    "forward 33\n"+
+    "\nshowTurtle\n";
 
   // ----------------
 
@@ -83,7 +133,7 @@ class TextBox {
     textAreaBackgroundColor = backgroundC_;
     textAreaBorderColor = borderC_;
 
-    initText(text2);
+    initText(textExample2);
 
     currentLine=editorArray.length-1;
 
@@ -303,7 +353,7 @@ class TextBox {
     if (editorArray.length<=0) {
       // something went very wrong
       editorArray = new EditorLine[1];
-      editorArray[0]=new EditorLine("");
+      editorArray[0]=new EditorLine("\n");
     }
 
     // further possible errors 
@@ -318,21 +368,22 @@ class TextBox {
       currentColumn=0;
     }
 
-    if (currentColumn < text1.length()-1) {
+    if (currentColumn < editorArray[currentLine].text1.length()) {
       //
     } else {
       //
-      currentColumn=text1.length()-1;
+      currentColumn = editorArray[currentLine].text1.length();
       if (currentColumn<0)
         currentColumn=0;
-    }//else
+    } //else
 
     // then prepare the current line 
     editorArray[currentLine].initLine(currentColumn);
   }//func
 
   void writeLineBackInArray() {
-    editorArray[currentLine].writeLineBackInArray();
+    if (currentLine < tbox1.editorArray.length)
+      editorArray[currentLine].writeLineBackInArray();
   }
 
   void decreaseCurrentColumn() {
@@ -348,8 +399,8 @@ class TextBox {
     writeLineBackInArray(); 
 
     currentColumn++;
-    if (currentColumn > text1.length())
-      currentColumn = text1.length();
+    if (currentColumn > editorArray[currentLine].text1.length())
+      currentColumn = editorArray[currentLine].text1.length();
 
     // initNewLine();
     if (currentColumn<0)
@@ -359,26 +410,26 @@ class TextBox {
     initNewLine();
   }
 
-  void mousePressed() {
+  void mousePressed1() {
 
     // we want to place the cursor in the pressed spot in the script
 
     float textx=x+3; // x+3
     float texty=y+2; // y+2 
 
+    // loop over all lines
     for (int i = start; i < min(start+linesInEditor, editorArray.length); i++) {
 
       if (mouseX>textx && mouseY>texty && 
         mouseX<textx+w && mouseY<=texty+13) {
+        // success 
         writeLineBackInArray(); 
         currentLine = i;        
         currentColumn = getCurrentColumn(textx); 
         textSize(24); 
         initNewLine();
-        //break;
         return;
       }//if 
-
       //next line
       texty+=13;
     }//for
@@ -394,19 +445,22 @@ class TextBox {
     }
 
     textSize(14);
-
+    println(editorArray[currentLine].text1);
     for (int i = 0; i < editorArray[currentLine].text1.length(); i++) {
 
       String leftText1 = editorArray[currentLine].text1.substring( 0, i );
+      println(leftText1);
+
       float leftWidth1 = textWidth(leftText1);
 
       if (textx+leftWidth1 > mouseX) {
         return i-1; // success
-      }//if
-    }//for
+      } //if
+    } //for
 
     return editorArray[currentLine].text1.length();
-  }//func
+    //
+  } //func
 
   void mouseWheelTextArea(MouseEvent event) {
 

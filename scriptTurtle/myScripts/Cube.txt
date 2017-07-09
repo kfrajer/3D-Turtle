@@ -1,4 +1,4 @@
-// comment this sketch
+// Cube
 
 Repeat 4 (
     oneSideOfCube
@@ -13,13 +13,10 @@ LEARN oneSideOfCube [
 ]
 
 LEARN rectangle [
-    forward 30
-    right 90
-    forward 30
-    right 90
-    forward 30
-    right 90
-    forward 30
-    right 90
+    Repeat 4 (
+        forward 30
+        right 90
+    )
 ]
+
 

@@ -1,4 +1,4 @@
-// comment: this demonstrates multiple function calls
+// demon for multiple function calls
 
 gridColor 199 99 99
 gridOn

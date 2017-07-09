@@ -1,4 +1,5 @@
-// comment for this Script: one angle
+// Turtle Script: Demo for Nose up and Nose down (3D rotation)
+
 gridON
 forward 44
 right 90 

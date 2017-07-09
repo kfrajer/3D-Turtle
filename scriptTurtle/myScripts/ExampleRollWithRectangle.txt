@@ -1,4 +1,4 @@
-// comment this sketch
+// Demo for rollRight 
 
 REPEAT 10 (
     oneRect

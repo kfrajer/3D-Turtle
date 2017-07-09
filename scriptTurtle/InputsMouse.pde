@@ -4,8 +4,9 @@
 void mouseMoved() {
   // valid in all states 
   // store time since last mouse moved
+
   timeSinceLastMouseMoved=millis();
-}
+} //func
 
 void mousePressed() {
 
@@ -51,7 +52,12 @@ void mousePressed() {
   case stateError:
   case stateWaitForSave:
   case stateWaitForLoad:
+  case stateManually:
     // do nothing 
+    break; 
+
+  case stateManuallyHelp:
+    state = stateManually;
     break; 
 
   default:
@@ -69,6 +75,7 @@ void mousePressedForStateEdit() {
   // upper left command bar 
 
   boolean done=false;
+
   for (int i=0; i<btnLengthInMainMenu; i++) {
     if (rectButtons.get(i).over() && !done) {
       done = true;
@@ -78,7 +85,7 @@ void mousePressedForStateEdit() {
   } // for
 
   if (!done) {
-    tbox1.mousePressed();
+    tbox1.mousePressed1();
   }
 } //func 
 
@@ -109,7 +116,7 @@ void doCommandMouse(int commandNumber) {
 
   case 4:
     // New
-    tbox1.initText(tbox1.text1); 
+    tbox1.initText(tbox1.textExample1); 
     tbox1.currentLine=0;
     tbox1.initNewLine();
     loadedFile=""; 
@@ -144,17 +151,6 @@ void doCommandMouse(int commandNumber) {
     state=stateShowLogfile;
     break; 
 
-  case 9:
-    // paste from clipboard into code - not working 
-    /*
-    String[] clipboardArray = split(GetTextFromClipboard(), "\n");
-     // Splice one array of values into another
-     tbox1.spliceArray(clipboardArray);
-     clipboardArray=null; 
-     tbox1.initNewLine();
-     */
-    break; 
-
     // scrolling 
   case 10:
     // scrolling 
@@ -170,9 +166,26 @@ void doCommandMouse(int commandNumber) {
       tbox1.start=tbox1.editorArray.length-tbox1.linesInEditor;
     break;
 
+  case 9: 
+    // manually steer
+    // init state 
+    // tbox1.writeLineBackInArray(); 
+    // tbox1.initText("\n"); 
+    manuallyLastCommand="";
+    tbox1.currentLine = tbox1.editorArray.length-1;
+    tbox1.initNewLine();
+    loadedFile = ""; 
+    fileName   = ""; 
+    if (fileName.equals("")) {
+      fileName="<Not a file>";
+    }
+    state = stateManually;
+    break; 
+
   default:
     println ("Error 91: unknown command int: "
-      +commandNumber); 
+      +commandNumber
+      +" +++++++++++++++++++++++++++++++++++++"); 
     exit(); 
     break;
   }//switch
@@ -224,14 +237,15 @@ void doCommandMouseLogFile(int commandNumber) {
 }//func
 
 void mouseWheel(MouseEvent event) {
-  if (state==stateEdit)
-  {
+  if (state==stateEdit) {
     // edit state 
+    float e = event.getCount();
+    println(e); 
     tbox1.mouseWheelTextArea(event);
   } else if (state==stateShowLogfile) {
     // in log file state 
     tboxLogFile1.mouseWheelTextArea(event);
     tboxLogFile2.mouseWheelTextArea(event);
-  }
+  } // else if
 }//func 
 //

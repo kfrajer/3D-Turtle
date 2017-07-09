@@ -1,4 +1,4 @@
-// comment for this Script: one angle
+// Demo for two separate Repeats
 
 
 gridON

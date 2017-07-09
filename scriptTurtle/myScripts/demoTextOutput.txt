@@ -1,4 +1,4 @@
-// comment for this Script: Text Demo
+// Turtle Script: Text Demo
 
 gridON
 forward 44

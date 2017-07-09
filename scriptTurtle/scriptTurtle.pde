@@ -40,11 +40,13 @@ final int stateWaitForSave   = 4;
 final int stateWaitForLoad   = 5;
 final int stateHelp          = 6;
 final int stateShowLogfile   = 7;
+final int stateManually      = 8; 
+final int stateManuallyHelp  = 9; 
 int state = stateWelcomeScreen;  // current
 
 // other variables --------------
 
-String versionString = "Version 0.1.312";
+String versionString = "Version 0.1.314";
 
 // Misc 
 String stateText=""; 
@@ -64,6 +66,10 @@ String log="";
 // state show log file: no editor only text displaying 
 TextBoxDisplayOnly tboxLogFile1, tboxLogFile2;
 
+// for state manually 
+String textForStatusBarManuallyOnTopScreen=""; 
+String manuallyLastCommand=""; 
+
 // standard commands with 1 parameter 
 String cmdsWithOneParameter =
   "#FORWARD#BACKWARD#RIGHT#LEFT#NOSEDOWN#NOSEUP#ROLLRIGHT#ROLLLEFT#"
@@ -73,6 +79,45 @@ String cmdsOther =
   "#LEARN#REPEAT#END#BOX#SPHERE#)#]#//#SHOWTURTLE#ARROW#"
   +"TURTLE#COLOR#BACKGROUND#GRIDON#GRIDOFF#PENDOWN#PENUP#"
   +"GRIDCOLOR#ELLIPSE#SET#ADD#SUB#MULT#DIV#HELP#";
+
+// manage load and save ----------------------------------------
+
+String savePath=""; 
+String loadPath=""; 
+boolean loadWithInsert=false; 
+
+String loadedFile = ""; 
+
+String fileName = ""; 
+
+// For the screen Buttons -------------------------------------
+
+// for debugging and making new buttons set to true; 
+// standard is false 
+final boolean showButtonsForDebugging = false;  
+
+// how many for edit mode 
+final int btnLengthInMainMenu = 13;  // (in main menu (upper left corner))
+final int btnLengthInLogFile  = 4;   // log file 
+
+final color colYellow = color(244, 244, 44);
+
+boolean locked;
+
+// colors Buttons 
+final color col1 = #ff0000;
+final color col2 = #ffff00;
+final color col3 = #000000;
+
+// for the tool tip text 
+int timeSinceLastMouseMoved=millis(); // store time since last mouse moved / pressed
+
+ArrayList<RectButton> rectButtons = new ArrayList(); 
+
+ArrayList<RectButton> rectButtonsStateLogFile = new ArrayList(); 
+
+PImage iconLoad;
+
 
 // ------------------------------------------------------------
 // processing core 
@@ -110,9 +155,10 @@ void setup() {
 } //func
 
 void draw() {
-  background(192);
+  if (state!=stateManually)
+    background(192);
 
-  // the core 
+  // the core (see tab states)
   stateManagement();
   //
 }//func

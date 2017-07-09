@@ -1,4 +1,4 @@
-// comment for this Script: one angle
+// Turtle Script: Demo for Turtle as Turtle and as Arrow
 gridON
 
 Arrow

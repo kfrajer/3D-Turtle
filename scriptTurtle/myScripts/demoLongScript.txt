@@ -1,4 +1,4 @@
-// Comment: Triangle
+// Comment: A long script to test scrolling 
 // 
 
 gridOn

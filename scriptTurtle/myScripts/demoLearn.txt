@@ -1,4 +1,4 @@
-// Comnment: Triangle
+// Demo for Learn: Triangle
 
 triangle
 gridOn

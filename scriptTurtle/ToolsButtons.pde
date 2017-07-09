@@ -5,34 +5,6 @@
 // -----------------------------------------------------------------------------------------
 // Init Buttons
 
-// for debugging and making new buttons set to true; 
-// standard is false 
-final boolean showButtonsForDebugging = false;  
-
-// how many for edit mode 
-final int btnLengthInMainMenu = 12;  // (in main menu (upper left corner))
-final int btnLengthInLogFile  = 4;   // log file 
-
-final color colYellow = color(244, 244, 44);
-
-boolean locked;
-
-// colors Buttons 
-final color col1 = #ff0000;
-final color col2 = #ffff00;
-final color col3 = #000000;
-
-// for the tool tip text 
-int timeSinceLastMouseMoved=millis(); // store time since last mouse moved / pressed
-
-ArrayList<RectButton> rectButtons = new ArrayList(); 
-
-ArrayList<RectButton> rectButtonsStateLogFile = new ArrayList(); 
-
-PImage iconLoad;
-
-// --------------------------------------------------
-
 void setupButtons() {
 
   // for the command-buttons on the right side of the screen
@@ -49,35 +21,35 @@ void setupButtons() {
     rectButtons.add(new RectButton(xPos, 20, 52, 52, col1, col2, true, "commandBarMain", 0, "", "", null));
   } // for
 
-  rectButtons.get(0).ToolTipText =  "Run the Turtle Script, click me";
+  rectButtons.get(0).ToolTipText =  " Click here to run the Turtle Script ";
   rectButtons.get(0).Text = "Run";
   rectButtons.get(0).btnImage = loadImage("iconPlay.jpg");
 
-  rectButtons.get(1).ToolTipText = "Load a sketch";
+  rectButtons.get(1).ToolTipText = "Load a Turtle Script ";
   rectButtons.get(1).Text = "Load";
   rectButtons.get(1).btnImage = iconLoad;
 
-  rectButtons.get(2).ToolTipText = "Save sketch";
+  rectButtons.get(2).ToolTipText = "Save your Turtle Script ";
   rectButtons.get(2).Text = "Save";
   rectButtons.get(2).btnImage = loadImage("iconSave.jpg");
 
   int i=3; 
-  rectButtons.get(i).ToolTipText = "Save sketch As... with a new name.";
+  rectButtons.get(i).ToolTipText = "Save Turtle Script As... with a new name.";
   rectButtons.get(i).Text = "Save As...";
   rectButtons.get(i).btnImage = loadImage("iconSaveAs.jpg");
 
   i=4; 
-  rectButtons.get(i).ToolTipText = "Delete entire sketch (Warning!)";
+  rectButtons.get(i).ToolTipText = "New Turtle Script - deletes entire current Turtle Script (Warning! Save first)";
   rectButtons.get(i).Text = "NEW";
   rectButtons.get(i).btnImage = loadImage("iconNew.jpg");
 
   i=5; 
-  rectButtons.get(i).ToolTipText = "Load file and insert into sketch";
+  rectButtons.get(i).ToolTipText = "Load file and insert into Turtle Script";
   rectButtons.get(i).Text = "LoadInsert";
   rectButtons.get(i).btnImage = loadImage("iconInsertFile.jpg");
 
   i=6;
-  rectButtons.get(i).ToolTipText = "Delete line from Script";
+  rectButtons.get(i).ToolTipText = "Delete line from Turtle Script ";
   rectButtons.get(i).Text = "DeleteLine";
   rectButtons.get(i).btnImage = loadImage("iconDeleteLine.jpg");
 
@@ -90,12 +62,6 @@ void setupButtons() {
   rectButtons.get(i).ToolTipText = "Show Logfile";
   rectButtons.get(i).Text = "ShowLogfile";
   rectButtons.get(i).btnImage = loadImage("iconLogfile.jpg");
-
-  i=9;
-  rectButtons.get(i).ToolTipText = "Paste from Clipboard. ";
-  rectButtons.get(i).Text = "paste";
-  rectButtons.get(i).btnImage = loadImage("iconPasteFC.jpg");
-  rectButtons.get(i).Exists=false; 
 
   i=10;
   rectButtons.get(i).ToolTipText = "Scroll up. ";
@@ -111,8 +77,16 @@ void setupButtons() {
   rectButtons.get(i).setPosition (  12+400, 80+height-110-16, // x, y
     16, 16);
 
+  i=9;
+  rectButtons.get(i).ToolTipText = "Manually steer 3D Turtle and draw this way. Parallel make Turtle Script via Teach-In.";
+  rectButtons.get(i).Text =  "Manually"; //  "";
+  rectButtons.get(i).btnImage = loadImage("Manually.jpg");
+  rectButtons.get(i).setPosition (   9*64 + 20, 20, // x, y
+    40, 50);   //   w, h
 
-  // Init Buttons 
+  // ------------------------------------------------------------------
+  // Init Buttons for Logfile  
+
   for (int x=0; x < btnLengthInLogFile; x++) {    
     // Using a multiple of x means the buttons aren't all on top of each other (and 20 is the distance to the left screen border)
     int xPos = x*64 + 20; 

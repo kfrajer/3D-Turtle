@@ -1,4 +1,4 @@
-// Demonstrate penUp and penDown
+// Demon for penUp and penDown
 
 gridON
 

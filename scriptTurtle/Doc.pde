@@ -18,14 +18,22 @@
 
 // Desiderata / wishes  
 // You can write a function with key word LEARN. You cannot pass variables to it though (wish).
-// You can't use REPEAT n [ ... ] yet. 
-// You don't have any variables yet. 
+// You have some variables yet but not many.
+// REPEAT should know which iteration it is in.
+// Not possible to store Turtle position / heading / Matrix. 
 
 // Remarks / Errata: The editor
 // I tried using G4P text area but it has difficulties in a P3D environment (fault is caused by processing, not by G4P).
 // I also tried ControlP5. 
 // Instead I used a text box by gotoloop and enhanced it a bit. Pos1 and End (and many others like F1, PgUp...) don't work due to a P3D issue.  
-// There are still things to improve in the editor (e.g. backspace, DEL, Cursor all end at the line and don't go over line end/line beginning yet). 
+// There are still things to improve in the editor (e.g. Cursor ends at the end of the line and doesn't go over line end/line beginning yet). 
+// Use of Clipboard with ctrl-c,ctrl-v is missing.
+// Not possible to store the current matrix under a name (just pushMatrix and popMatrix).  
+
+// Missing commands: 
+// startPath()   startet die Aufzeichnung der Turtlebewegung zum nachträglichen Füllen
+// fillPath()    verbindet die aktuelle Turtleposition mit dem Startpunkt und füllt die geschlossene Figur mit der Füllfarbe
+// saveImage     speichere Bild 
 
 // Concept in Editor:
 // When we use CRS up and down currentLine changes; 
@@ -67,7 +75,6 @@
 // YAW / turn   : left / right
 // PITCH        : noseDown / noseUP
 
-
 // 2. We can draw something: 
 // forward / backward (x)
 // sink / rise (z value changes)
@@ -97,24 +104,24 @@
  showTurtle
  
  LEARN rectangle [
-   forward 30
-   right 90
-   forward 30
-   Triangle
-   right 90
-   forward 30
-   right 90
-   forward 30
-   right 90
+ forward 30
+ right 90
+ forward 30
+ Triangle
+ right 90
+ forward 30
+ right 90
+ forward 30
+ right 90
  ]
  
  LEARN Triangle [
-   forward 30
-   right 120
-   forward 30
-   right 120
-   forward 30
-   right 120
+ forward 30
+ right 120
+ forward 30
+ right 120
+ forward 30
+ right 120
  ]
  
  */

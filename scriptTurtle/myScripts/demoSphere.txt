@@ -1,4 +1,5 @@
-// comment this sketch
+// Demo for sphere
+
 gridON
 sphere 15
 forward 44

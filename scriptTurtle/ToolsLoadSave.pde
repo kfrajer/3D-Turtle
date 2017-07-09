@@ -1,14 +1,6 @@
 
 // manage load and save
 
-String savePath=""; 
-String loadPath=""; 
-boolean loadWithInsert=false; 
-
-String loadedFile = ""; 
-
-String fileName = ""; 
-
 // ------------------------------------------------------------
 // init loading and saving 
 
@@ -65,8 +57,8 @@ void fileSelectedForLoad(File selection) {
     // println("Window was closed or the user hit cancel.");
     state=stateEdit;
   } else {
-    loadPath=selection.getAbsolutePath();
-    loadedFile=selection.getAbsolutePath();
+    loadPath   = selection.getAbsolutePath();
+    loadedFile = selection.getAbsolutePath();
     println("User selected " + selection.getAbsolutePath());
   }
 }

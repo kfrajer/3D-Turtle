@@ -1,5 +1,4 @@
-// Comnment: Triangle
-
+// Comnment: platonic bodys: Tetrahedron 
 
 gridOn
 
